@@ -122,7 +122,7 @@ $(document).ready(function () {
         }
         let text = messageDiv.clone().children('span').remove().end().children('div').remove().end().text();
         let author = mainDiv.parent('div.group-messages').find('div div div.presentation span.nick').text();
-        addText('@' + author + ': [quote]' + text + '[/quote]');
+        addText('@' + author + ': [quote]' + text + '[/quote]\n');
     });
 
     $('body').on('mouseleave', ".message", function () {
