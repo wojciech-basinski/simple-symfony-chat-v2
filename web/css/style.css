@@ -1,0 +1,378 @@
+@import "fontello.css";
+
+html, body {
+    background: #777777;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#info-box {
+    padding-top: 15px;
+    height: 7%;
+}
+
+.chat {
+    height: 100%;
+    overflow: hidden;
+}
+
+#chat-main-page {
+    padding: 0;
+    margin: 0;
+    height: auto;
+    min-height: 100%;
+}
+
+#messages, #online-users {
+    height: 81%;
+    margin-top: 10px;
+    /*margin: 0 !important;*/
+}
+
+#panel-messages, #panel-users {
+    height: 100%;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.text-underline {
+    text-decoration: underline;
+}
+
+.date {
+    font-size: 15px;
+    margin-right: 4px;
+    font-style: italic;
+}
+
+.panel-messages {
+    height: 100%;
+}
+
+#messages-box {
+    font-size: 15px;
+    width: 100%;
+    height: 100%;
+    line-height: 1.10;
+}
+
+#messages-box, .panel-no-padding {
+    border-top: #d6e9c6 solid 5px;
+    overflow: auto;
+    overflow-x: hidden;
+    word-wrap: break-word;
+}
+
+.custom-select {
+    display: inline-block;
+    max-width: 100%;
+    height: calc(2.25rem + 2px);
+    padding: .375rem 1.75rem .375rem .75rem;
+    line-height: 1.25;
+    color: #464a4c;
+    vertical-align: middle;
+    background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23333' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center;
+    background-size: auto auto;
+    -webkit-background-size: 8px 10px;
+    background-size: 8px 10px;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: .25rem;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
+
+.emoticons-div {
+    background: #5cb85c;
+    margin: 5px 0 0 15px;
+    border: 1px solid #423c2c;
+    border-radius: 5px;
+    color: white;
+    opacity: 0.9;
+    box-sizing: border-box;
+    padding: 5px;
+    width: auto;
+    display: inline-block;
+}
+
+.emoticon-text {
+    max-width: 25px;
+    max-height: 25px;
+}
+
+.emoticon-img {
+    width: 16px;
+    height: 16px;
+    margin-right: 2px;
+}
+
+.emoticon-img:hover {
+    background: #1E69DE;
+}
+
+.kursor {
+    cursor: pointer;
+}
+
+.message-error {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    padding-left: 5px;
+}
+
+.message {
+    padding: 1px 0 1px 10px;
+    min-height: 20px;
+}
+
+.message:hover {
+    background: #EEE;
+}
+
+.message.light:hover {
+    background: chartreuse;
+}
+
+.demotywatorking {
+    color: #FF0080
+}
+
+.administrator {
+    color: red;
+}
+
+.elder {
+    color: #00BF80;
+}
+
+.shiny-hunter {
+    color: #00BFFF;
+}
+
+.hunter-lider {
+    color: #00FF40;
+}
+
+.friend {
+    color: #FF8000;
+}
+
+.moderator {
+    color: #FFFF00;
+}
+
+.user {
+    color: #FFF;
+}
+
+.light {
+    background: #5cb85c;
+}
+
+.margin-top-minus {
+    height: 10%;
+}
+
+#typing {
+    position: absolute;
+    right: 0;
+    margin-left: 20px;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
+#emoticon-row {
+    height: 5%;
+}
+
+#text-row {
+    height: 7%;
+}
+
+.line {
+    color: red;
+    font-size: 12px;
+    font-weight: bold;
+    min-height: 1px;
+    width: 100%;
+    text-align: center;
+    border-bottom: red dashed 1px;
+}
+
+.line:before {
+    content: attr(data-content);
+}
+
+.row {
+    margin: 0 !important;
+}
+
+.text-in-info {
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.text-in-info.active {
+    background: #5cb85c;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.info-text {
+    font-size: 16px;
+    padding-left: 5px;
+    margin-top: 10px;
+}
+
+.no-border {
+    border: 0;
+}
+
+.logout {
+    position: absolute;
+    bottom: 0;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    float: left;
+}
+
+.date-hidden {
+    padding-top: 2px;
+    float: left;
+    font-size: 14px;
+}
+
+.padding-left {
+    padding-left: 45px;
+}
+
+.message-text {
+    width: auto;
+}
+
+#bbcode {
+    padding-left: 30px;
+    margin-bottom: 2px;
+}
+
+#bbcode .btn {
+    height: 20px;
+    padding: 0 6px;
+}
+
+#status, #sound, #scroll {
+    margin-top: 5px;
+    display: inline-block;
+    width: 33px;
+    height: 33px;
+}
+
+.ok {
+    background-image: url("../img/settings/ok.png");
+    background-size: cover;
+}
+
+.in-progress {
+    background-image: url("../img/settings/in_progress.png");
+    background-size: cover;
+}
+
+.wrong {
+    background-image: url("../img/settings/wrong.png");
+    background-size: cover;
+}
+
+.audio-on {
+    background-image: url("../img/settings/sound.png");
+    background-size: cover;
+}
+
+.audio-off {
+    background-image: url("../img/settings/nosound.png");
+    background-size: cover;
+}
+
+.scroll {
+    background-image: url("../img/settings/go.png");
+    background-size: cover;
+}
+
+.no-scroll {
+    background-image: url("../img/settings/stop.png");
+    background-size: cover;
+}
+
+.bbcode-img, .youtube {
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.nick {
+    font-size: 17px;
+}
+
+.group-messages {
+    margin-top: 3px;
+}
+
+.presentation {
+    margin-bottom: 3px;
+}
+
+.private-message {
+    background: #1E69DE;
+}
+
+.private-message:hover {
+    background: #54A3EE;
+}
+
+.youtube-video {
+    background: black;
+    width: 650px;
+    height: 350px;
+    border: 50px black;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.youtube-video-iframe {
+    display: block;
+    margin: 0 auto;
+    width: 600px;
+    height: 300px;
+}
+
+.youtube-video .close {
+    color: white;
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 40px;
+}
+
+#users-box {
+    overflow: auto;
+    overflow-x: hidden;
+}

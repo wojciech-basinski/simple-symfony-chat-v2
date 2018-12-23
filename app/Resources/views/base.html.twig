@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>CHAT</title>
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
+    {% block stylesheets %}
+    {% endblock %}
+    <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+    <script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    {% block javascripts %}
+    {% endblock %}
+</head>
+<body>
+    <div class="container-fluid" id="chat-main-page">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

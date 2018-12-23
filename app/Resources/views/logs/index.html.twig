@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/black.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/locale/pl.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var logsHref = "{{ url('chat_logs_view', {'start' : 'start', 'end' : 'end'}) }}";
+            $('.js-datepicker').datetimepicker();
+
+            $('.btn').click(function() {
+                var start = $('#start').val();
+                var end = $('#end').val();
+                if (start === '') {
+                    alert('Data początkowa nie może być pusta');
+                    return false;
+                }if (end === '') {
+                    alert('Data końcowa nie może być pusta');
+                    return false;
+                }
+                logsHref = logsHref.replace('start', encodeURI(start)).replace('end', encodeURI(end));
+                location.replace(logsHref);
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div style="position: relative" class="margin-bottom">
+            <input class="js-datepicker form-control" id="start" placeholder="data startowa" />
+        </div>
+        <div style="position: relative" class="margin-bottom">
+            <input class="js-datepicker form-control" id="end" placeholder="data końcowa" />
+        </div>
+        <br />
+        <div class="btn btn-success">Stalkuj</div>
+    </div>
+{% endblock %}

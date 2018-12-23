@@ -1,0 +1,31 @@
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/black.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    <div class="row chat" id="chat-row-main">
+
+        <div class="col-xs-12" id="messages">
+            <div class="panel panel-success" id="panel-messages">
+                <div class="panel-body panel-messages no-padding">
+                    <div id="messages-box">
+                        {% for message in messages|sort %}
+                        <div class="message">
+                        <span class="date">({{ message.date|date('H:i:s') }})</span>
+                        <span class="{{ message.role }} text-bold nick pointer">{{ message.username }}</span>:
+                        <span class="message-text">
+                            {{ message.text|raw }}
+                        </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

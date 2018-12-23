@@ -1,0 +1,38 @@
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
+
+    role_hierarchy:
+        ROLE_FRIEND: ROLE_USER
+        ROLE_SHINY_HUNTER: ROLE_USER
+        ROLE_SHINY_LIDER: ROLE_SHINY_HUNTER
+        ROLE_MODERATOR: ROLE_SHINY_HUNTER
+        ROLE_ELDERS: ROLE_MODERATOR
+        ROLE_ADMIN: ROLE_ELDERS
+        ROLE_SUPER_ADMIN: [ ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
+    firewalls:
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                csrf_token_generator: security.csrf.token_manager
+                login_path: fos_user_security_login
+                check_path: fos_user_security_check
+                always_use_default_target_path: true
+                default_target_path: add_online
+            logout:
+                path: fos_user_security_logout
+                target: homepage
+            anonymous:    true
+
+    access_control:
+        - { path: /chat/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /chat/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /chat/img, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: /chat/chat/admin, role: ROLE_ADMIN }
+        - { path: /chat/chat, role: ROLE_USER }
