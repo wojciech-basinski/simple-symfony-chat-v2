@@ -376,3 +376,16 @@ html, body {
     overflow: auto;
     overflow-x: hidden;
 }
+
+.relative-for-menu {
+    position: relative;
+}
+
+.menu {
+    background-color: #5cb85c;
+    height: 25px;
+    display: inline-block;
+    position: absolute;
+    left: 80%;
+    top: -30px;
+}
