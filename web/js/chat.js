@@ -28,6 +28,7 @@ $(document).ready(function () {
 
     window.onblur = function () {
         active = false;
+        removeLineNewMessages();
     };
     window.onfocus = function () {
         active = true;
@@ -45,12 +46,12 @@ $(document).ready(function () {
         $('#message-text').val('/priv ' + value + ' ').focus();
     });
 
-    $(document).on('click', '.youtube', function() {
-       $('.youtube-video-iframe').attr('src', $(this).attr('data-href'));
-       $('.youtube-video').css('display', 'flex').draggable();//.resizable();
+    $(document).on('click', '.youtube', function () {
+        $('.youtube-video-iframe').attr('src', $(this).attr('data-href'));
+        $('.youtube-video').css('display', 'flex').draggable();//.resizable();
     });
 
-    $('.youtube-video').on('click', '.close', function() {
+    $('.youtube-video').on('click', '.close', function () {
         $('.youtube-video-iframe').attr('src', '');
         $('.youtube-video').css('display', 'none');
     });
@@ -96,6 +97,36 @@ $(document).ready(function () {
             event.preventDefault();
             sendMessage();
         }
+    });
+
+    $('body').on('mouseenter', ".message", function () {
+        let id = $(this).parent('div[data-id]').attr('data-id');
+        if (id === undefined) {
+            id = $(this).parent().parent('div[data-id]').attr('data-id');
+        }
+        $(this).append(appendMenu(id));
+    });
+
+    function appendMenu(id) {
+        return '<div class="relative-for-menu"><div class="menu" data-menu-id="' + id + '">'
+            + '<span class="quote pointer">' + chatText['quote'] + '</span>'
+            + '</div></div>';
+    }
+
+    $('body').on('click', '.quote', function () {
+        let id = $(this).parent('div.menu').attr('data-menu-id');
+        let mainDiv = $('div[data-id="' + id + '"]');
+        let messageDiv = mainDiv.children('div.message');
+        if (!messageDiv.length) {
+            messageDiv = mainDiv.children('div').children('div.message');
+        }
+        let text = messageDiv.clone().children('span').remove().end().children('div').remove().end().text();
+        let author = mainDiv.parent('div.group-messages').find('div div div.presentation span.nick').text();
+        addText('@' + author + ': [quote]' + text + '[/quote]');
+    });
+
+    $('body').on('mouseleave', ".message", function () {
+        $(this).find('div.relative-for-menu').remove();
     });
 
     $('body').on('click', '.channel', function () {
@@ -203,7 +234,7 @@ $(document).ready(function () {
     function checkChannels(channels) {
         channelsOnChat.forEach(function (element, index, array) {
             let inArray = 0;
-            Object.keys(channels).forEach(function(key) {
+            Object.keys(channels).forEach(function (key) {
                 if (element.key == key) {
                     inArray = 1;
                 }
@@ -217,7 +248,7 @@ $(document).ready(function () {
     }
 
     function addChannels(channels) {
-        Object.keys(channels).forEach(function(key) {
+        Object.keys(channels).forEach(function (key) {
             if (channelsOnChat.indexOf(key) === -1) {
                 $('#channels').append(
                     '<div class="text-in-info channel ' + (self.channel == key ? 'active' : '') + '" data-value="' + key + '">' + channels[key] + '</div>'
@@ -227,8 +258,9 @@ $(document).ready(function () {
             }
         });
     }
+
     function addInfoToChannelCountOfMessage(val) {
-        channelsOnChat.forEach(function(element, index) {
+        channelsOnChat.forEach(function (element, index) {
             if (element == val.channel) {
                 addCounterToMessageOnOtherChannels(index, element);
             }
@@ -353,7 +385,7 @@ $(document).ready(function () {
             }
             statusOk();
         });
-        setTimeout(refreshChat, 1500);
+        setTimeout(refreshChat, 5000);
     }
 
     function createDate(dateInput) {
@@ -550,7 +582,7 @@ $(document).ready(function () {
                 return '<img src="' + emoticonsImg[i] + '" class="emoticon-img kursor" alt="' + alt + '"/>';
             });
         }
-        setTimeout(refreshChat, 1500);
+        setTimeout(refreshChat, 1000);
     }
 
     function parseBbCode(message) {
@@ -658,7 +690,7 @@ $(document).ready(function () {
 
     function messageCreateParts(message) {
         var parts = [];
-        while(message.indexOf('[yt]') !== -1) {
+        while (message.indexOf('[yt]') !== -1) {
             let start = message.indexOf('[yt]');
             let end = message.indexOf('[/yt]') + '[/yt]'.length;
             let first = message.substr(0, start);
@@ -688,7 +720,7 @@ $(document).ready(function () {
         if (message.length) {
             parts.push(message);
         }
-        parts.forEach(function(value, index, parts) {
+        parts.forEach(function (value, index, parts) {
             if (
                 (value.indexOf('[yt]') !== -1 && value.indexOf('[/yt]') !== -1) ||
                 (value.indexOf('[img]') !== -1 && value.indexOf('[/img]') !== -1) ||
@@ -777,6 +809,11 @@ $(document).ready(function () {
         var bbCodeSecond = '[/' + bbCode + ']';
 
         insertText(bbCodeFirst, bbCodeSecond);
+    }
+
+    function addText(text) {
+        var value = $('#message-text').val();
+        $('#message-text').val(value + text).focus();
     }
 
     function insertText(textStart, textEnd) {
