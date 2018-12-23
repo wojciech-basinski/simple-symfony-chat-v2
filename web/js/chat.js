@@ -385,7 +385,7 @@ $(document).ready(function () {
             }
             statusOk();
         });
-        setTimeout(refreshChat, 5000);
+        setTimeout(refreshChat, 1500);
     }
 
     function createDate(dateInput) {
@@ -582,7 +582,7 @@ $(document).ready(function () {
                 return '<img src="' + emoticonsImg[i] + '" class="emoticon-img kursor" alt="' + alt + '"/>';
             });
         }
-        setTimeout(refreshChat, 1000);
+        setTimeout(refreshChat, 1500);
     }
 
     function parseBbCode(message) {
