@@ -104,10 +104,10 @@ $(document).ready(function () {
         if (id === undefined) {
             id = $(this).parent().parent('div[data-id]').attr('data-id');
         }
-        $(this).append(appendMenu(id));
+        $(this).prepend(prependMenu(id));
     });
 
-    function appendMenu(id) {
+    function prependMenu(id) {
         return '<div class="relative-for-menu"><div class="menu" data-menu-id="' + id + '">'
             + '<span class="quote pointer">' + chatText['quote'] + '</span>'
             + '</div></div>';
