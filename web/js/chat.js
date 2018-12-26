@@ -75,6 +75,20 @@ $(document).ready(function () {
         changeSound()
     });
 
+    $("#emoji-container").emojioneArea({
+        standalone: true,
+        search: false,
+        filtersPosition: "bottom",
+        shortnames: true,
+        events: {
+            emojibtn_click: function (button, event) {
+                addText(button.attr("data-name"));
+                return false;
+            }
+        }
+    });
+
+
     function changeSound() {
         if (settings.sound === 1) {
             settings.sound = 0;
@@ -737,7 +751,28 @@ $(document).ready(function () {
         return parts.join('');
     }
 
+    function onlyUnique(value, index, self) {
+        return self.indexOf(value) === index;
+    }
+
+    function createUrlEmoji(text) {
+        return 'https://cdn.jsdelivr.net/emojione/assets/3.1/png/32/' + text + '.png';
+    }
+
     function parseEmoticons(message) {
+        let reg = /:{1}[a-zA-Z0-9_]{1,}:{1}/g;
+        if (reg.test(message)) {
+            let matched = message.match(reg).filter(onlyUnique);
+            for (i = 0; i < matched.length; i++) {
+                let emojiUrlPart = emoticonsEmoji[matched[i]];
+                if (emojiUrlPart === undefined) {
+                    continue;
+                }
+                message = message.replaceAll(matched[i],
+                    '<img class="emoticon-text" src="' + createUrlEmoji(emojiUrlPart) + '" alt="' + matched[i] + '"/>'
+                    );
+            }
+        }
         for (i = 0; i < emoticons.length; i++) {
             if (Array.isArray(emoticons[i])) {
                 for (j = 0; j < emoticons[i].length; j++) {
