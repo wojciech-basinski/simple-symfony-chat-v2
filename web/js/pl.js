@@ -3,5 +3,6 @@ var chatText = {
     'typing1': 'pisze...',
     'typing2': 'piszą...',
     'new': 'NOWE WIADOMOŚCI',
-    'quote': 'Cytat'
+    'quote': 'Cytat',
+    'search' : 'Szukaj'
 };
