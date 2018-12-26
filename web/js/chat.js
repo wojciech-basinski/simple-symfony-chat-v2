@@ -760,7 +760,7 @@ $(document).ready(function () {
     }
 
     function parseEmoticons(message) {
-        let reg = /:{1}[a-zA-Z0-9_]{1,}:{1}/g;
+        let reg = /:{1}[a-zA-Z0-9_-]{1,}:{1}/g;
         if (reg.test(message)) {
             let matched = message.match(reg).filter(onlyUnique);
             for (i = 0; i < matched.length; i++) {
