@@ -34,9 +34,10 @@
         "twig/twig": "^2.0"
     },
     "require-dev": {
+        "matthimatiker/opcache-bundle": "^0.7.1",
+        "phpunit/phpunit": "6.3.*",
         "sensio/generator-bundle": "^3.0",
-        "symfony/phpunit-bridge": "^3.0",
-        "phpunit/phpunit": "6.3.*"
+        "symfony/phpunit-bridge": "^3.0"
     },
     "scripts": {
         "symfony-scripts": [
