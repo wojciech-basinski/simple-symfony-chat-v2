@@ -129,6 +129,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
                                 return new RedirectResponse($path);
                             }
                         );
+                        return;
                     }
                     $this->setUsersRoles($user, $value2);
                     $user->setAvatar($value2[0]['user_avatar']);
