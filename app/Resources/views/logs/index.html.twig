@@ -31,8 +31,11 @@
                     alert('Data końcowa nie może być pusta');
                     return false;
                 }
+                if (user != '') {
+                    user = '/' + user;
+                }
 
-                logsHref = logsHref.replace('start', encodeURI(start)).replace('end', encodeURI(end)) + '/' + user;
+                logsHref = logsHref.replace('start', encodeURI(start)).replace('end', encodeURI(end)) + user;
                 location.replace(logsHref);
             });
         });
