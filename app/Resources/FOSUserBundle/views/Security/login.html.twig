@@ -8,13 +8,6 @@
 {% extends '::base.html.twig' %}
 {% trans_default_domain 'FOSUserBundle' %}
 {% block content %}
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">
-        <span>
-        {{ message|raw }}
-        </span>
-        </div>
-    {% endfor %}
     {% if error %}
         <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}

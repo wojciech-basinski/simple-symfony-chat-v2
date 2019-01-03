@@ -5,3 +5,10 @@
         </span>
     </div>
 {% endfor %}
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        <span>
+            {{ message|raw }}
+        </span>
+    </div>
+{% endfor %}
