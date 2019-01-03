@@ -15,7 +15,7 @@
                     <div id="messages-box">
                         {% for message in messages|sort %}
                         <div class="message">
-                        <span class="date">({{ message.date|date('H:i:s') }})</span>
+                        <span class="date">({{ message.date|date('Y-m-d H:i:s') }})</span>
                         <span class="{{ message.role }} text-bold nick pointer">{{ message.username }}</span>:
                         <span class="message-text">
                             {{ message.text|raw }}
