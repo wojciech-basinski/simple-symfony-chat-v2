@@ -3,6 +3,11 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('css/black.css') }}">
+    <style>
+        .row {
+            color: black !important;
+        }
+    </style>
 {% endblock %}
 
 {% block javascripts %}
@@ -17,14 +22,17 @@
             $('.btn').click(function() {
                 var start = $('#start').val();
                 var end = $('#end').val();
+                var user = $('#user').val();
                 if (start === '') {
                     alert('Data początkowa nie może być pusta');
                     return false;
-                }if (end === '') {
+                }
+                if (end === '') {
                     alert('Data końcowa nie może być pusta');
                     return false;
                 }
-                logsHref = logsHref.replace('start', encodeURI(start)).replace('end', encodeURI(end));
+
+                logsHref = logsHref.replace('start', encodeURI(start)).replace('end', encodeURI(end)) + '/' + user;
                 location.replace(logsHref);
             });
         });
@@ -39,6 +47,7 @@
         <div style="position: relative" class="margin-bottom">
             <input class="js-datepicker form-control" id="end" placeholder="data końcowa" />
         </div>
+        <input type="text" placeholder="Tylko ten użytkownik" id="user">
         <br />
         <div class="btn btn-success">Stalkuj</div>
     </div>
