@@ -43,6 +43,18 @@ class User extends BaseUser
     protected $ip;
 
     /**
+     * @var null|\DateTime
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $banned;
+
+    /**
+     * @var null|string
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    protected $banReason;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -135,7 +147,7 @@ class User extends BaseUser
     {
         $this->avatar = $avatar;
         return $this;
-}
+    }
 
     /**
      * @return string
@@ -154,5 +166,41 @@ class User extends BaseUser
     {
         $this->ip = $ip;
         return $this;
-}
+    }
+
+    /**
+     * @param \DateTime|null $banned
+     * @return User
+     */
+    public function setBanned(?\DateTime $banned): User
+    {
+        $this->banned = $banned;
+        return $this;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getBanned(): ?\DateTime
+    {
+        return $this->banned;
+    }
+
+    /**
+     * @param null|string $banReason
+     * @return User
+     */
+    public function setBanReason(?string $banReason): User
+    {
+        $this->banReason = $banReason;
+        return $this;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getBanReason(): ?string
+    {
+        return $this->banReason;
+    }
 }

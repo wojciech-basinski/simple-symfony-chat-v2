@@ -1,0 +1,7 @@
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        <span>
+            {{ message|raw }}
+        </span>
+    </div>
+{% endfor %}

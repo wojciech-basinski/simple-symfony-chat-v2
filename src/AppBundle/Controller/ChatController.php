@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Utils\Banned;
 use AppBundle\Utils\Channel;
 use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\Message;
@@ -125,7 +126,7 @@ class ChatController extends Controller
             $messages = $messageService->getMessagesFromLastId($this->getUser());
         }
         $typing = $request->request->get('typing');
-        $typing = in_array($typing, [0,1]) ? $typing : 0;
+        $typing = in_array($typing, [0, 1]) ? $typing : 0;
 
         $changeChannel = 0;
         $userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), $typing);
@@ -138,12 +139,12 @@ class ChatController extends Controller
 
         $usersOnline = $userOnlineService
             ->getOnlineUsers(
-            $this->getUser()->getId(),
-            $session->get('channel')
-        );
+                $this->getUser()->getId(),
+                $session->get('channel')
+            );
         $channels = [];
         foreach ($config->getChannels($this->getUser()) as $key => $value) {
-            $channelNameTranslated = $translator->trans('channel.'.$value, [], 'chat', $translator->getLocale());
+            $channelNameTranslated = $translator->trans('channel.' . $value, [], 'chat', $translator->getLocale());
             $channels[$key] = ($channelNameTranslated !== 'channel.' . $value) ? $channelNameTranslated : $value;
         }
         $return = [
@@ -246,5 +247,25 @@ class ChatController extends Controller
         $response->headers->set('Content-Type', 'image/jpeg');
         $response->setContent(file_get_contents($url));
         return $response;
+    }
+
+    /**
+     * @Route("/banned/{user}", name="banned")
+     * @param Banned $banned
+     * @param string $user
+     * @return Response
+     */
+    public function bannedAction(Banned $banned, string $user)
+    {
+        $reason = $banned->getReason($user);
+        $time = $banned->getTime($user);
+        if ($time <= new \DateTime('now')) {
+            $banned->removeBan($user);
+            $this->addFlash('success', 'Ban został zdjęty, zaloguj się ponownie');
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+        $timeFormatted = $time->format('Y-m-d H:i:s');
+        $this->addFlash('error', "Ban do: $timeFormatted<br /> powód: $reason");
+        return $this->render('chat/banned.html.twig');
     }
 }
