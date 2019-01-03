@@ -25,23 +25,29 @@ class LogsController extends Controller
     }
 
     /**
-     * @Route("/stalker/view/{start}/{end}", name="chat_logs_view")
+     * @Route("/stalker/view/{start}/{end}/{user}", name="chat_logs_view")
      * @param string $start
      * @param string $end
+     * @param string $user
      * @param Logs $logs
      *
      * @param AuthorizationCheckerInterface $auth
      *
      * @return Response
      */
-    public function logsViewAction(string $start, string $end, Logs $logs, AuthorizationCheckerInterface $auth)
-    {
+    public function logsViewAction(
+        string $start,
+        string $end,
+        Logs $logs,
+        AuthorizationCheckerInterface $auth,
+        string $user = ''
+    ) {
         if (!$auth->isGranted('ROLE_ADMIN')) {
             throw new UnauthorizedHttpException('You do not have permission to visit this page');
         }
 
         return $this->render('logs/logs.html.twig', [
-            'messages' => $logs->getLogs($start, $end)
+            'messages' => $logs->getLogs($start, $end, $user)
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\User;
 use AppBundle\Utils\ChatConfig;
 
 /**
@@ -123,16 +124,20 @@ class MessageRepository extends \Doctrine\ORM\EntityRepository
             ->getResult();
     }
 
-    public function findBetweenTwoDates(\DateTime $start, \DateTime $end, int $privChannel): array
+    public function findBetweenTwoDates(\DateTime $start, \DateTime $end, int $privChannel, ?User $user): array
     {
-        return $this->createQueryBuilder('m')
+        $em = $this->createQueryBuilder('m')
             ->where('m.date >= :start')
             ->andWhere('m.date <= :end')
-            ->andWhere('m.channel < :privChannel')
-            ->setParameter('start', $start)
+            ->andWhere('m.channel < :privChannel');
+        if ($user) {
+            $em->andWhere('m.userId = :id')
+                ->setParameter('id', $user->getId());
+        }
+        $em->setParameter('start', $start)
             ->setParameter('end', $end)
-            ->setParameter('privChannel', $privChannel)
-            ->getQuery()
+            ->setParameter('privChannel', $privChannel);
+        return $em->getQuery()
             ->getResult();
     }
 

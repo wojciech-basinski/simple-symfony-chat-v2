@@ -1,16 +1,16 @@
 <?php
 namespace AppBundle\Utils;
 
-use AppBundle\Repository\MessageRepository;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\Message;
 
 class Logs
 {
     /**
-     * @var MessageRepository
+     * @var EntityManagerInterface
      */
-    private $messageRepository;
+    private $em;
     /**
      * @var ChatConfig
      */
@@ -18,11 +18,11 @@ class Logs
 
     public function __construct(EntityManagerInterface $em, ChatConfig $config)
     {
-        $this->messageRepository = $em->getRepository(Message::class);
+        $this->em = $em;
         $this->config = $config;
     }
 
-    public function getLogs(string $start, string $end): array
+    public function getLogs(string $start, string $end, string $userName): array
     {
         [$dateStart, $dateEnd] = $this->createDates($start, $end);
 
@@ -30,12 +30,23 @@ class Logs
             [$dateStart, $dateEnd] = [$dateEnd, $dateStart];
         }
 
-        $messages = $this->messageRepository->findBetweenTwoDates(
+        $user = $this->getUser($userName);
+
+        $messages = $this->em->getRepository(Message::class)->findBetweenTwoDates(
             $dateStart,
             $dateEnd,
-            $this->config->getPrivateMessageAdd()
+            $this->config->getPrivateMessageAdd(),
+            $user
         );
         return $messages;
+    }
+
+    private function getUser(string $userName): ?User
+    {
+        if ($userName === '') {
+            return null;
+        }
+        return $this->em->getRepository(User::class)->findOneByUsername($userName);
     }
 
     private function createDates(string $start, string $end): array
@@ -45,7 +56,8 @@ class Logs
 
         if ($start === false) {
             $start = new \DateTime('now');
-        }if ($end === false) {
+        }
+        if ($end === false) {
             $end = new \DateTime('now');
         }
 
