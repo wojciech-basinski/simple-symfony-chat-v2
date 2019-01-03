@@ -61,6 +61,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
         if (!ChatConfig::getPhpBB()) {
             return;
         }
+        dump($this->request);
         $event->stopPropagation();
         $cookie = (int)$this->request->cookies->get('phpbb3_1umhw_u');
         $cookieSession = $this->request->cookies->get('phpbb3_1umhw_sid');
