@@ -21,7 +21,7 @@ class BannedController extends Controller
         if ($time <= new \DateTime('now')) {
             $banned->removeBan($user);
             $this->addFlash('success', 'Ban został zdjęty, zaloguj się ponownie');
-            return $this->redirectToRoute('fos_user_security_login');
+            return $this->render('chat/banned.html.twig');
         }
         $timeFormatted = $time->format('Y-m-d H:i:s');
         $this->addFlash('error', "Ban do: $timeFormatted<br /> powód: $reason");
