@@ -39,7 +39,7 @@ class Message
     /**
      * @var string
      *
-     * @ORM\Column(name="text", type="string", length=2000)
+     * @ORM\Column(name="text", type="text")
      */
     private $text;
 
