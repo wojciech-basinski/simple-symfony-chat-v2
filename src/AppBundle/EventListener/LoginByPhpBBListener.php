@@ -2,6 +2,7 @@
 
 namespace AppBundle\EventListener;
 
+use AppBundle\Controller\BannedController;
 use AppBundle\Entity\ListPhs;
 use AppBundle\Entity\User;
 use AppBundle\Utils\ChatConfig;
@@ -61,8 +62,10 @@ class LoginByPhpBBListener implements EventSubscriberInterface
         if (!ChatConfig::getPhpBB()) {
             return;
         }
-        dump($this->request);
         $event->stopPropagation();
+        if ($event->getController()[0] instanceof BannedController) {
+            return;
+        }
         $cookie = (int)$this->request->cookies->get('phpbb3_1umhw_u');
         $cookieSession = $this->request->cookies->get('phpbb3_1umhw_sid');
         if (!$cookie || $cookie == 1 || !$cookieSession) {
