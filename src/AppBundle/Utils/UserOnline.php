@@ -39,15 +39,19 @@ class UserOnline
      *
      * @param User $user User instance
      * @param int $channel Channel's id
+     * @return int
      */
-    public function addUserOnline(User $user, int $channel)
+    public function addUserOnline(User $user, int $channel): int
     {
+        if ($user->getBanned()) {
+            return 1;
+        }
         if ( $this->em->getRepository('AppBundle:UserOnline')
             ->findOneBy([
                 'userId' => $user->getId()
             ])
         ) {
-            return;
+            return 0;
         }
 
         $online = new \AppBundle\Entity\UserOnline();
@@ -59,6 +63,7 @@ class UserOnline
 
         $this->em->persist($online);
         $this->em->flush();
+        return 0;
     }
 
     /**
@@ -67,15 +72,17 @@ class UserOnline
      * @param User $user User instance
      * @param int $channel Channel's id
      */
-    public function updateUserOnline(User $user, int $channel, bool $typing)
+    public function updateUserOnline(User $user, int $channel, bool $typing): int
     {
         $online = $this->em->getRepository('AppBundle:UserOnline')
                     ->findOneBy([
                         'userId' => $user->getId()
                     ]);
         if (!$online) {
-            $this->addUserOnline($user, $channel);
-            return;
+            if ($this->addUserOnline($user, $channel)) {
+                return 1;
+            }
+            return 0;
         }
         $online->setOnlineTime(new \DateTime('now'));
         $online->setChannel($channel);
@@ -83,6 +90,7 @@ class UserOnline
 
         $this->em->persist($online);
         $this->em->flush();
+        return 0;
     }
 
     /**

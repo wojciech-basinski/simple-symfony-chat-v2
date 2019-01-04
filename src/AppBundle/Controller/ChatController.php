@@ -53,7 +53,9 @@ class ChatController extends Controller
             $session->set('channel', 1);
         }
 
-        $userOnline->updateUserOnline($user, $channel, 0);
+        if ($userOnline->updateUserOnline($user, $channel, 0)) {
+            return $this->redirectToRoute('banned', ['user' => $this->getUser()->getUsername()]);
+        }
         $response = new Response();
         $body = $this->container->get('twig')->render('chat/index.html.twig', [
             'user' => $user,
@@ -127,7 +129,9 @@ class ChatController extends Controller
         $typing = in_array($typing, [0, 1]) ? $typing : 0;
 
         $changeChannel = 0;
-        $userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), $typing);
+        if ($userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), $typing)) {
+            return new JsonResponse(['banned']);
+        }
 
         if (!$channel->checkIfUserCanBeOnThatChannel($this->getUser(), $session->get('channel'))) {
             $session->set('channel', 1);

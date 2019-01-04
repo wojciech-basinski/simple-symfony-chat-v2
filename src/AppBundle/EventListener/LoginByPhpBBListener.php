@@ -126,15 +126,6 @@ class LoginByPhpBBListener implements EventSubscriberInterface
                     }
                 } else {
                     $user = $this->logUser($value2);
-                    if ($user === null ) {
-                        $path = $this->router->generate('banned', ['user' => $value2[0]['username']]);
-                        $event->setController(
-                            function () use ($path) {
-                                return new RedirectResponse($path);
-                            }
-                        );
-                        return;
-                    }
                     $this->setUsersRoles($user, $value2);
                     $user->setAvatar($value2[0]['user_avatar']);
                     $user->setIp($this->request->server->get('REMOTE_ADDR'));
@@ -173,10 +164,6 @@ class LoginByPhpBBListener implements EventSubscriberInterface
     private function logUser(array $value): ?UserInterface
     {
         $user = $this->userManager->findUserByUsername($value[0]['username']);
-
-        if ($user->getBanned()) {
-            return null;
-        }
 
         $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
         $this->tokenStorage->setToken($token);
