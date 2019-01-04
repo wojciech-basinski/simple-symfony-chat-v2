@@ -417,7 +417,8 @@ class SpecialMessages
             );
             return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
         }
-        $textParts = explode(' ', $textSplitted[1]);
+        $textParts = explode(' ', $textSplitted[1], 3);
+
         if (!count($textParts)) {
             $text = $this->translator->trans(
                 'error.wrongUsername',
