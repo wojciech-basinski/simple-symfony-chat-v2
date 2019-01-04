@@ -54,7 +54,7 @@ class ChatController extends Controller
         }
 
         if ($userOnline->updateUserOnline($user, $channel, 0)) {
-            return $this->redirectToRoute('banned', ['user' => $this->getUser()->getUsername()]);
+            return $this->redirectToRoute('banned');
         }
         $response = new Response();
         $body = $this->container->get('twig')->render('chat/index.html.twig', [

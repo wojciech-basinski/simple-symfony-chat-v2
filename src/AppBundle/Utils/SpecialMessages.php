@@ -464,7 +464,9 @@ class SpecialMessages
         $this->em->persist($userToBan);
         $userOnline = $this->em->getRepository(UserOnline::class)
             ->findOneBy(['userId' => $userToBan->getId()]);
-        $this->em->remove($userOnline);
+        if ($userOnline) {
+            $this->em->remove($userOnline);
+        }
         $this->em->flush();
 
 
