@@ -25,7 +25,7 @@ class SecurityController extends Controller
         $user = $this->getUser();
         $this->get('session')->set('channel', 1);
         if ($userOnline->addUserOnline($user, 1)) {
-            return $this->redirectToRoute('banned', ['user' => $this->getUser()->getUsername()]);
+            return $this->redirectToRoute('banned');
         }
 
         return $this->redirectToRoute('chat_index');

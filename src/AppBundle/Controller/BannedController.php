@@ -9,17 +9,20 @@ use Symfony\Component\HttpFoundation\Response;
 class BannedController extends Controller
 {
     /**
-     * @Route("/banned/{user}", name="banned")
+     * @Route("/banned", name="banned")
      * @param Banned $banned
-     * @param string $user
      * @return Response
      */
-    public function bannedAction(Banned $banned, string $user)
+    public function bannedAction(Banned $banned)
     {
-        $reason = $banned->getReason($user);
-        $time = $banned->getTime($user);
+        if ($this->getUser() === null) {
+            return $this->redirectToRoute('chat_index');
+        }
+        $userName = $this->getUser()->getUsername();
+        $reason = $banned->getReason($userName);
+        $time = $banned->getTime($userName);
         if ($time <= new \DateTime('now')) {
-            $banned->removeBan($user);
+            $banned->removeBan($userName);
             $this->addFlash('success', 'Ban został zdjęty, zaloguj się ponownie');
             return $this->render('chat/banned.html.twig');
         }
