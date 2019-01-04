@@ -354,6 +354,9 @@ $(document).ready(function () {
             data: params,
             url: refreshPath
         }).done(function (msg) {
+            if (msg[0] === "banned") {
+                location.reload(true);
+            }
             if (msg.kickFromChannel === 1) {
                 kickFromChannel();
             }

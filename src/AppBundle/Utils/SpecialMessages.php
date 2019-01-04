@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use AppBundle\Entity\UserOnline;
 
 class SpecialMessages
 {
@@ -461,6 +462,9 @@ class SpecialMessages
         $userToBan->setBanReason($reason)
             ->setBanned((new \DateTime('now'))->modify("+ $length sec"));
         $this->em->persist($userToBan);
+        $userOnline = $this->em->getRepository(UserOnline::class)
+            ->findOneBy(['userId' => $userToBan->getId()]);
+        $this->em->remove($userOnline);
         $this->em->flush();
 
 
