@@ -18,6 +18,7 @@ $(document).ready(function () {
     Notification.requestPermission();
     $('[data-toggle="tooltip"]').tooltip();
 
+    var removeLine;
     var active = true;
     var newMessagesCount = 0;
     var title = document.title;
@@ -29,12 +30,13 @@ $(document).ready(function () {
     window.onblur = function () {
         active = false;
         removeLineNewMessages();
+        clearTimeout(removeLine);
     };
     window.onfocus = function () {
         active = true;
         newMessagesCount = 0;
         document.title = title;
-        setTimeout(removeLineNewMessages, 8000);
+        removeLine = setTimeout(removeLineNewMessages, 8000);
     };
 
     statusInProgress();
