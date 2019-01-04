@@ -40,6 +40,7 @@ chat:
     invitationSent: Wysłano zaproszenie do kanału dla gracza chat.user
     uninviteSent: Wyproszono użytkownika chat.user
     uninviteToChannel: Wyproszono Cię z kanału [chat.channel]
+    banned: Użytkownik chat.user został zbanowany
 
 error:
     userNotFound: Użytkownik chat.nick nie znaleziony
@@ -50,3 +51,5 @@ error:
     channelCantUninvite: Nie można usunąć zaproszenia z tego kanału
     uninviteYourself: Nie możesz usunąć zaproszenia samego siebie z tego kanału
     invitationNotSent: Nie znaleziono zaproszenia dla użytkownika chat.user
+    notPermittedToBan: Nie masz uprawnień do banowania użytkowników
+    cantBanYourdelf: Nie możesz zbanować samego siebie

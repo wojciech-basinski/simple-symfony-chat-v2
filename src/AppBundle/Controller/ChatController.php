@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Utils\Banned;
 use AppBundle\Utils\Channel;
 use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\Message;
@@ -90,7 +89,6 @@ class ChatController extends Controller
         $user = $this->getUser();
 
         $status = $message->addMessageToDatabase($user, $messageText);
-
         return $this->json($status);
     }
 

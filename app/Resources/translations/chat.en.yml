@@ -40,6 +40,7 @@ chat:
     invitationSent: Sent invitation to channel for user chat.user
     uninviteSent: User chat.user has been uninvited
     uninviteToChannel: You have been uninvited from channel [chat.channel]
+    banned: User chat.user has been banned
 
 error:
     userNotFound: User chat.nick not found
@@ -50,3 +51,5 @@ error:
     channelCantUninvite: You cannot uninvite user from this channel
     uninviteYourself: You cannot uninvite yourself from this channel
     invitationNotSent: Invitation to user chat.user not found
+    notPermittedToBan: You are not permitted to ban users
+    cantBanYourdelf: You cannot ban yourself

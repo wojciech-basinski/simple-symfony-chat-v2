@@ -6,6 +6,7 @@ use AppBundle\Entity\Invite;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class SpecialMessages
@@ -31,18 +32,24 @@ class SpecialMessages
      * @var SessionInterface
      */
     private $session;
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private $auth;
 
     public function __construct(
         TranslatorInterface $translator,
         EntityManagerInterface $em,
         ChatConfig $config,
-        SessionInterface $session
+        SessionInterface $session,
+        AuthorizationCheckerInterface $auth
     ) {
         $this->translator = $translator;
         $this->locale = $translator->getLocale();
         $this->em = $em;
         $this->config = $config;
         $this->session = $session;
+        $this->auth = $auth;
     }
 
     public function specialMessagesDisplay(string $text, User $user): array
@@ -79,6 +86,8 @@ class SpecialMessages
                 return $this->invite($textSplitted, $user);
             case '/uninvite':
                 return $this->uninvite($textSplitted, $user);
+            case '/ban':
+                return $this->banUser($textSplitted, $user);
             default:
                 return ['userId' => false];
         }
@@ -395,5 +404,71 @@ class SpecialMessages
             'showText' => $text,
             'userId' => ChatConfig::getBotId()
         ];
+    }
+
+    private function banUser(array $textSplitted, User $user): array
+    {
+        if (!$this->auth->isGranted('ROLE_MODERATOR', $user)) {
+            $text = $this->translator->trans(
+                'error.notPermittedToBan',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+        }
+        $textParts = explode(' ', $textSplitted[1]);
+        if (!count($textParts)) {
+            $text = $this->translator->trans(
+                'error.wrongUsername',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+        }
+        $length = 60*60;
+        if (count($textParts) > 1 && is_numeric($textParts[1])) {
+            $length = $textParts[1] * 60;
+        }
+        /** @var User|null $userToBan */
+        $userToBan = $this->em->getRepository(User::class)
+            ->findOneByUsername($textParts[0]);
+        if ($userToBan === null) {
+            $text = $this->translator->trans(
+                'error.userNotFound',
+                ['chat.nick' => $textParts[0]],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+        }
+        if ($userToBan->getId() === $user->getId()) {
+            $text = $this->translator->trans(
+                'error.cantBanYourdelf',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+        }
+        $reason = 'no details';
+        if (count($textParts) > 2) {
+            $reason = $textParts[2];
+        }
+
+        $userToBan->setBanReason($reason)
+            ->setBanned((new \DateTime('now'))->modify("+ $length sec"));
+        $this->em->persist($userToBan);
+        $this->em->flush();
+
+
+        $text = $this->translator->trans(
+            'chat.banned',
+            ['chat.user' => $userToBan->getUsername()],
+            'chat',
+            $this->locale
+        );
+        return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
     }
 }
