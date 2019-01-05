@@ -89,6 +89,8 @@ class SpecialMessages
                 return $this->uninvite($textSplitted, $user);
             case '/ban':
                 return $this->banUser($textSplitted, $user);
+            case '/banlist':
+                return $this->banList($user);
             default:
                 return ['userId' => false];
         }
@@ -416,7 +418,7 @@ class SpecialMessages
                 'chat',
                 $this->locale
             );
-            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
         }
         $textParts = explode(' ', $textSplitted[1], 3);
 
@@ -427,7 +429,7 @@ class SpecialMessages
                 'chat',
                 $this->locale
             );
-            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
         }
         $length = 60*60;
         if (count($textParts) > 1 && is_numeric($textParts[1])) {
@@ -443,7 +445,7 @@ class SpecialMessages
                 'chat',
                 $this->locale
             );
-            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
         }
         if ($userToBan->getId() === $user->getId()) {
             $text = $this->translator->trans(
@@ -452,7 +454,7 @@ class SpecialMessages
                 'chat',
                 $this->locale
             );
-            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
         }
         $reason = 'no details';
         if (count($textParts) > 2) {
@@ -476,6 +478,33 @@ class SpecialMessages
             'chat',
             $this->locale
         );
-        return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 1];
+        return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+    }
+
+    private function banList(User $user): array
+    {
+        if (!$this->auth->isGranted('ROLE_MODERATOR', $user)) {
+            $text = $this->translator->trans(
+                'error.notPermittedToListBan',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+        }
+        $bannedUsers = $this->em->getRepository(User::class)
+            ->getBannedUsers();
+
+        $text = $this->translator->trans(
+            'chat.bannedUser',
+            [],
+            'chat',
+            $this->locale
+        );
+        foreach ($bannedUsers as $user) {
+            $text .= ' ' . $user->getUsername() .', ';
+        }
+        $text = rtrim($text, ', ');
+        return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
     }
 }
