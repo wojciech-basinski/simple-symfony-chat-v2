@@ -89,6 +89,8 @@ class SpecialMessages
                 return $this->uninvite($textSplitted, $user);
             case '/ban':
                 return $this->banUser($textSplitted, $user);
+            case '/unban':
+                return $this->unbanUser($textSplitted, $user);
             case '/banlist':
                 return $this->banList($user);
             default:
@@ -505,6 +507,65 @@ class SpecialMessages
             $text .= ' ' . $user->getUsername() .', ';
         }
         $text = rtrim($text, ', ');
+        return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+    }
+
+    private function unbanUser(array $textSplitted, User $user): array
+    {
+        if (!$this->auth->isGranted('ROLE_MODERATOR', $user)) {
+            $text = $this->translator->trans(
+                'error.notPermittedToUnban',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+        }
+        $textParts = explode(' ', $textSplitted[1]);
+
+        if (!count($textParts)) {
+            $text = $this->translator->trans(
+                'error.wrongUsername',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+        }
+        /** @var User|null $userToUnban */
+        $userToUnban = $this->em->getRepository(User::class)
+            ->findOneByUsername($textParts[0]);
+        if ($userToUnban === null) {
+            $text = $this->translator->trans(
+                'error.userNotFound',
+                ['chat.nick' => $textParts[0]],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+        }
+        if ($userToUnban->getId() === $user->getId()) {
+            $text = $this->translator->trans(
+                'error.cantUnbanYourself',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+        }
+
+        $userToUnban->setBanReason(null)
+            ->setBanned(null);
+        $this->em->persist($userToUnban);
+        $this->em->flush();
+
+
+        $text = $this->translator->trans(
+            'chat.unbanned',
+            ['chat.user' => $userToUnban->getUsername()],
+            'chat',
+            $this->locale
+        );
         return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
     }
 }

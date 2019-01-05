@@ -41,6 +41,7 @@ chat:
     uninviteSent: User chat.user has been uninvited
     uninviteToChannel: You have been uninvited from channel [chat.channel]
     banned: User chat.user has been banned
+    unbanned: User chat.user has been unbanned
     bannedUser: "Banned users: "
 
 error:
@@ -53,5 +54,7 @@ error:
     uninviteYourself: You cannot uninvite yourself from this channel
     invitationNotSent: Invitation to user chat.user not found
     notPermittedToBan: You are not permitted to ban users
-    cantBanYourdelf: You cannot ban yourself
+    notPermittedToUnban: You are not permitted to unban users
+    cantBanYourself: You cannot ban yourself
+    cantBanYourself: You cannot unban yourself
     notPermittedToListBan: You do not have permission to see bans' list
