@@ -56,5 +56,5 @@ error:
     notPermittedToBan: You are not permitted to ban users
     notPermittedToUnban: You are not permitted to unban users
     cantBanYourself: You cannot ban yourself
-    cantBanYourself: You cannot unban yourself
+    cantUnbanYourself: You cannot unban yourself
     notPermittedToListBan: You do not have permission to see bans' list
