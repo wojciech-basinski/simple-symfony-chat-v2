@@ -58,3 +58,4 @@ error:
     cantBanYourself: Nie możesz zbanować samego siebie
     cantUnbanYourself: Nie możesz odbanować samego siebie
     notPermittedToListBan: Nie masz upranień do zobaczenia listy banów
+    cantBanAdmin: Nie możesz zbanować innego administratora

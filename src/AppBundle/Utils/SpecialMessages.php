@@ -449,6 +449,15 @@ class SpecialMessages
             );
             return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
         }
+        if ($userToBan->getRoles() === ['ROLE_ADMIN']) {
+            $text = $this->translator->trans(
+                'error.cantBanAdmin',
+                [],
+                'chat',
+                $this->locale
+            );
+            return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+        }
         if ($userToBan->getId() === $user->getId()) {
             $text = $this->translator->trans(
                 'error.cantBanYourdelf',
