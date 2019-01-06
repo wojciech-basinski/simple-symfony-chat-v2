@@ -449,7 +449,7 @@ class SpecialMessages
             );
             return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
         }
-        if ($userToBan->getChatRoleAsText() === 'administrator') {
+        if (\in_array($userToBan->getChatRoleAsText(), ['administrator', 'demotywatorking'])) {
             $text = $this->translator->trans(
                 'error.cantBanAdmin',
                 [],
