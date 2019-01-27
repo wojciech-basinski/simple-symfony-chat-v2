@@ -13,7 +13,7 @@ class BannedController extends Controller
      * @param Banned $banned
      * @return Response
      */
-    public function bannedAction(Banned $banned)
+    public function bannedAction(Banned $banned): Response
     {
         if ($this->getUser() === null) {
             return $this->redirectToRoute('chat_index');

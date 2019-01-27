@@ -37,12 +37,6 @@ class User extends BaseUser
     protected $avatar = '';
 
     /**
-     * @var string
-     * @ORM\Column(name="ip", type="string")
-     */
-    protected $ip;
-
-    /**
      * @var null|\DateTime
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -146,25 +140,6 @@ class User extends BaseUser
     public function setAvatar(string $avatar): User
     {
         $this->avatar = $avatar;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIp(): string
-    {
-        return $this->ip;
-    }
-
-    /**
-     * @param string $ip
-     *
-     * @return User
-     */
-    public function setIp(string $ip): User
-    {
-        $this->ip = $ip;
         return $this;
     }
 

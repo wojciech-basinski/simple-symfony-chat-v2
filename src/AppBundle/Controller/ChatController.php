@@ -231,7 +231,7 @@ class ChatController extends Controller
      *
      * @return Response
      */
-    public function reverseProxyAction(Request $request)
+    public function reverseProxyAction(Request $request): Response
     {
         $blockedImg = [
             'http://zmniejszacz.pl/zdjecie/2018/9/17/12944018_ukasz.jpg',

@@ -2,15 +2,8 @@
 
 namespace AppBundle\Utils;
 
-
 use Doctrine\ORM\EntityManagerInterface;
 
-/**
- * Service where admin can change user role
- *
- * Class AdminPanel
- * @package AppBundle\Utils
- */
 class AdminPanel
 {
     /**
@@ -47,10 +40,8 @@ class AdminPanel
      */
     public function changeUsersRole(int $id, string $role)
     {
-        $user = $this->em->getRepository('AppBundle:User')->findOneBy([
-            'id' => $id
-        ]);
-        if (!$user) {
+        $user = $this->em->getRepository('AppBundle:User')->find($id);
+        if ($user === null) {
             return;
         }
 

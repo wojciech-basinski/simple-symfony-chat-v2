@@ -16,7 +16,7 @@ class UserOnlineRepository extends \Doctrine\ORM\EntityRepository
      * @param int $channel Channel's id
      *
      */
-    public function deleteInactiveUsers(\DateTime $date, int $id, int $channel)
+    public function deleteInactiveUsers(\DateTime $date, int $id, int $channel): void
     {
         $this->createQueryBuilder('u')
             ->delete()
@@ -36,9 +36,9 @@ class UserOnlineRepository extends \Doctrine\ORM\EntityRepository
      * @param int $id User's id
      * @param int $channel Channel's id
      *
-     * @return array|null Array of users online or null if no users online
+     * @return array Array of users online or null if no users online
      */
-    public function findAllOnlineUserExceptUser(int $id, int $channel)
+    public function findAllOnlineUserExceptUser(int $id, int $channel): array
     {
         return $this->createQueryBuilder('u')
                 ->where('u.userId != :id')

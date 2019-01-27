@@ -14,9 +14,9 @@ class LogsController extends Controller
      * @Route("/stalker", name="chat_logs_stalker")
      * @param AuthorizationCheckerInterface $auth
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function logsAction(AuthorizationCheckerInterface $auth)
+    public function logsAction(AuthorizationCheckerInterface $auth): Response
     {
         if (!$auth->isGranted('ROLE_ADMIN')) {
             throw new UnauthorizedHttpException('You do not have permission to visit this page');
@@ -41,7 +41,7 @@ class LogsController extends Controller
         Logs $logs,
         AuthorizationCheckerInterface $auth,
         string $user = ''
-    ) {
+    ): Response {
         if (!$auth->isGranted('ROLE_ADMIN')) {
             throw new UnauthorizedHttpException('You do not have permission to visit this page');
         }

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\Invite;
 use AppBundle\Entity\User;
-use AppBundle\Repository\InviteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -87,8 +87,11 @@ class ChatConfig
      */
     private $invitations = null;
 
-    public function __construct(AuthorizationCheckerInterface $auth, EntityManagerInterface $em, SessionInterface $session)
-    {
+    public function __construct(
+        AuthorizationCheckerInterface $auth,
+        EntityManagerInterface $em,
+        SessionInterface $session
+    ) {
         $this->auth = $auth;
         $this->em = $em;
         $this->session = $session;
@@ -173,7 +176,7 @@ class ChatConfig
         if ($this->invitations !== null) {
             return $this->invitations;
         }
-        $invitations = $this->em->getRepository('AppBundle:Invite')->findBy([
+        $invitations = $this->em->getRepository(Invite::class)->findBy([
             'userId' => $user->getId()
         ]);
         if (!$invitations) {
@@ -210,5 +213,4 @@ class ChatConfig
         $id = $id - self::PRIVATE_CHANNEL_ADD;
         return $this->em->find('AppBundle:User', $id)->getUsername();
     }
-
 }

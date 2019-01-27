@@ -1,10 +1,14 @@
 <?php
 
-namespace AppBundle\Utils;
+namespace AppBundle\Utils\SpecialMessages;
 
 use AppBundle\Entity\Invite;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
+use AppBundle\Utils\ChatConfig;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -37,13 +41,18 @@ class SpecialMessages
      * @var AuthorizationCheckerInterface
      */
     private $auth;
+    /**
+     * @var Request
+     */
+    private $request;
 
     public function __construct(
         TranslatorInterface $translator,
         EntityManagerInterface $em,
         ChatConfig $config,
         SessionInterface $session,
-        AuthorizationCheckerInterface $auth
+        AuthorizationCheckerInterface $auth,
+        RequestStack $request
     ) {
         $this->translator = $translator;
         $this->locale = $translator->getLocale();
@@ -51,9 +60,10 @@ class SpecialMessages
         $this->config = $config;
         $this->session = $session;
         $this->auth = $auth;
+        $this->request = $request->getCurrentRequest();
     }
 
-    public function specialMessagesDisplay(string $text, User $user): array
+    public function specialMessagesDisplay(string $text): array
     {
         $textSplitted = explode(' ', $text, 2);
 
@@ -100,21 +110,8 @@ class SpecialMessages
 
     private function roll(array $text, User $user): array
     {
-        if (!isset($text[1])) {
-            $dice = [0 => 2, 1 => 6];
-        } else {
-            $dice = explode('d', $text[1]);
-        }
-        if (count($dice) < 2) {
-            $dice = [0 => 2, 1 => 6];
-        } else {
-            if (!(is_numeric($dice[0])) || $dice[0] <= 0 || $dice[0] > 100) {
-                $dice[0] = 2;
-            }
-            if (!(is_numeric($dice[1])) || $dice[1] <= 0 || $dice[1] > 100) {
-                $dice[1] = 6;
-            }
-        }
+        $dice = $this->createDice($text);
+
         $text = "/roll {$dice[0]}d{$dice[1]} {$user->getUsername()} ";
         $textSpecial = $user->getUsername() . ' ' .
             $this->translator->trans(
@@ -183,38 +180,27 @@ class SpecialMessages
         return ['userId' => false, 'message' => $message1, 'showText' => $showText, 'count' => 2];
     }
 
-    private function insertPw(User $user, User $secondUser, array $textSplitted): \AppBundle\Entity\Message
+    private function insertPw(User $user, User $secondUser, array $textSplitted): Message
     {
-        $message = new \AppBundle\Entity\Message();
+        $message = new Message();
         $message->setUserId($secondUser->getId())
             ->setUserInfo($user)
             ->setChannel($this->config->getUserPrivateMessageChannelId($secondUser))
             ->setDate(new \DateTime())
-            ->setText('/privMsg ' . $textSplitted[1]);
+            ->setText('/privMsg ' . $textSplitted[1])
+            ->setIp($this->request->server->get('REMOTE_ADDR'));
         $this->em->persist($message);
 
-        $message1 = new \AppBundle\Entity\Message();
+        $message1 = new Message();
         $message1->setUserId($user->getId())
             ->setUserInfo($user)
             ->setChannel($this->config->getUserPrivateMessageChannelId($user))
             ->setDate(new \DateTime())
-            ->setText('/privTo ' . $textSplitted[0] . ' ' . $textSplitted[1]);
+            ->setText('/privTo ' . $textSplitted[0] . ' ' . $textSplitted[1])
+            ->setIp($this->request->server->get('REMOTE_ADDR'));
         $this->em->persist($message1);
 
         return $message1;
-    }
-
-    private function insertErrorMessage(User $user, array $text, string $error)
-    {
-//        //???????????????po co to?
-//        $bot = $this->em->find('AppBundle:User', ChatConfig::getBotId());
-//        $message = new \AppBundle\Entity\Message();
-//        $message->setUserId($bot->getId())
-//            ->setUserInfo($bot)
-//            ->setChannel($this->config->getUserPrivateChannelId($user))
-//            ->setDate(new \DateTime())
-//            ->setText($error);
-//        $this->em->persist($message);
     }
 
     private function privToShow(array $text): array
@@ -365,12 +351,13 @@ class SpecialMessages
 
         $text = $invite ? "/invite {$user->getUsername()} $channel" : "/uninvite {$user->getUsername()} $channel";
 
-        $message = new \AppBundle\Entity\Message();
+        $message = new Message();
         $message->setUserId($userToInvite->getId())
             ->setDate(new \DateTime())
             ->setChannel($this->config->getUserPrivateMessageChannelId($userToInvite))
             ->setUserInfo($bot)
-            ->setText($text);
+            ->setText($text)
+            ->setIp($this->request->server->get('REMOTE_ADDR'));
         $this->em->persist($message);
     }
 
@@ -460,7 +447,7 @@ class SpecialMessages
         }
         if ($userToBan->getId() === $user->getId()) {
             $text = $this->translator->trans(
-                'error.cantBanYourdelf',
+                'error.cantBanYourself',
                 [],
                 'chat',
                 $this->locale
@@ -576,5 +563,25 @@ class SpecialMessages
             $this->locale
         );
         return ['userId' => ChatConfig::getBotId(), 'message' => false, 'text' => $text, 'count' => 0];
+    }
+
+    private function createDice(array $text): array
+    {
+        if (!isset($text[1])) {
+            return [0 => 2, 1 => 6];
+        }
+
+        $dice = explode('d', $text[1]);
+
+        if (count($dice) < 2) {
+            return [0 => 2, 1 => 6];
+        }
+        if (!(is_numeric($dice[0])) || $dice[0] <= 0 || $dice[0] > 100) {
+            $dice[0] = 2;
+        }
+        if (!(is_numeric($dice[1])) || $dice[1] <= 0 || $dice[1] > 100) {
+            $dice[1] = 6;
+        }
+        return $dice;
     }
 }

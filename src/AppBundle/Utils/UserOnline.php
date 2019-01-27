@@ -4,6 +4,7 @@ namespace AppBundle\Utils;
 
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use AppBundle\Entity\UserOnline as UserOnlineEntity;
 
 /**
  * Service to add, check and delete from Users online in database
@@ -46,7 +47,7 @@ class UserOnline
         if ($user->getBanned()) {
             return 1;
         }
-        if ( $this->em->getRepository('AppBundle:UserOnline')
+        if ( $this->em->getRepository(UserOnlineEntity::class)
             ->findOneBy([
                 'userId' => $user->getId()
             ])
@@ -54,7 +55,7 @@ class UserOnline
             return 0;
         }
 
-        $online = new \AppBundle\Entity\UserOnline();
+        $online = new UserOnlineEntity();
 
         $online->setUserId($user->getId());
         $online->setOnlineTime(new \DateTime('now'));
@@ -71,10 +72,13 @@ class UserOnline
      *
      * @param User $user User instance
      * @param int $channel Channel's id
+     * @param bool $typing
+     *
+     * @return int
      */
     public function updateUserOnline(User $user, int $channel, bool $typing): int
     {
-        $online = $this->em->getRepository('AppBundle:UserOnline')
+        $online = $this->em->getRepository(UserOnlineEntity::class)
                     ->findOneBy([
                         'userId' => $user->getId()
                     ]);
@@ -101,10 +105,10 @@ class UserOnline
      *
      * @return array Array of online Users
      */
-    public function getOnlineUsers(int $id, int $channel)
+    public function getOnlineUsers(int $id, int $channel): array
     {
         $this->deleteInactiveUsers($id, $channel);
-        $usersOnline = $this->em->getRepository('AppBundle:UserOnline')
+        $usersOnline = $this->em->getRepository(UserOnlineEntity::class)
             ->findAllOnlineUserExceptUser($id, $channel);
 
         foreach ($usersOnline as &$user) {
@@ -119,9 +123,9 @@ class UserOnline
      *
      * @param int $id User's id
      */
-    public function deleteUserWhenLogout(int $id)
+    public function deleteUserWhenLogout(int $id): void
     {
-        $online = $this->em->getRepository('AppBundle:UserOnline')
+        $online = $this->em->getRepository(UserOnlineEntity::class)
             ->findOneBy([
                 'userId' => $id,
             ]);
@@ -136,12 +140,12 @@ class UserOnline
      * @param int $id User's id
      * @param int $channel Channel's id
      */
-    private function deleteInactiveUsers(int $id, int $channel)
+    private function deleteInactiveUsers(int $id, int $channel): void
     {
         $time = new \DateTime('now');
         $time->modify('-'.$this->config->getInactiveTime().'sec');
 
-        $this->em->getRepository('AppBundle:UserOnline')
+        $this->em->getRepository(UserOnlineEntity::class)
                 ->deleteInactiveUsers($time, $id, $channel);
     }
 }
