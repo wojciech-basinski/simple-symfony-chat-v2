@@ -102,7 +102,6 @@ class LoginByPhpBBListener implements EventSubscriberInterface
                         $user->setPassword('');
                         $user->setEnabled(1);
                         $user->setAvatar($value2[0]['user_avatar']);
-                        $user->setIp($this->request->server->get('REMOTE_ADDR'));
 
                         $this->setUsersRoles($user, $value2);
 
@@ -128,7 +127,6 @@ class LoginByPhpBBListener implements EventSubscriberInterface
                     $user = $this->logUser($value2);
                     $this->setUsersRoles($user, $value2);
                     $user->setAvatar($value2[0]['user_avatar']);
-                    $user->setIp($this->request->server->get('REMOTE_ADDR'));
                     $this->em->persist($user);
                     $this->em->flush();
                     $path = $this->router->generate('add_online');
