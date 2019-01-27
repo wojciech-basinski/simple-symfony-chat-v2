@@ -11,7 +11,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 //https://stackoverflow.com/a/41473697
 class RegistrationCompleteListener implements EventSubscriberInterface
 {
-
+    /**
+     * @var UrlGeneratorInterface
+     */
     private $router;
 
     public  function __construct(UrlGeneratorInterface $router)
@@ -19,7 +21,7 @@ class RegistrationCompleteListener implements EventSubscriberInterface
         $this->router = $router;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             FOSUserEvents::REGISTRATION_SUCCESS => ['onUserRegistrationComplete', -30],
@@ -31,12 +33,11 @@ class RegistrationCompleteListener implements EventSubscriberInterface
      * When the user registration is completed redirect
      * to the add user online to database page
      */
-    public  function  onUserRegistrationComplete(FormEvent $event)
+    public  function  onUserRegistrationComplete(FormEvent $event): void
     {
         $url = $this->router->generate('add_online');
 
         $event->setResponse(new RedirectResponse($url));
-
     }
 
 }

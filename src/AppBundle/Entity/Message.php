@@ -63,6 +63,12 @@ class Message
     private $deletedAt = null;
 
     /**
+     * @var string
+     * @ORM\Column(type="string", length=15, nullable=true)
+     */
+    private $ip;
+
+    /**
      * @param User $userInfo User instance
      * @return $this
      */
@@ -207,6 +213,25 @@ class Message
     public function __toString(): string
     {
         return self::class . ':' . $this->id;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIp(): ?string
+    {
+        return $this->ip;
+    }
+
+    /**
+     * @param string $ip
+     *
+     * @return Message
+     */
+    public function setIp(string $ip): Message
+    {
+        $this->ip = $ip;
+        return $this;
     }
 }
 
