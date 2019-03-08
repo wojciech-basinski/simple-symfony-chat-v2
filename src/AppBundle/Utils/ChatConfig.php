@@ -162,9 +162,7 @@ class ChatConfig
         if ($this->auth->isGranted('ROLE_MODERATOR')) {
             $array[self::MODERATOR_CHANNEL_ID] = $this->getChannelName(self::MODERATOR_CHANNEL_ID);
         }
-        if ($this->auth->isGranted('ROLE_SHINY_HUNTER')) {
-            $array[self::SHINY_CHANNEL_ID] = $this->getChannelName(self::SHINY_CHANNEL_ID);
-        }
+        $array[self::SHINY_CHANNEL_ID] = $this->getChannelName(self::SHINY_CHANNEL_ID);
         if ($this->auth->isGranted('ROLE_ELDERS')) {
             $array[self::ELDERS_CHANNEL_ID] = $this->getChannelName(self::ELDERS_CHANNEL_ID);
         }
