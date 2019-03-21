@@ -139,8 +139,10 @@ html, body {
 .message.light:hover {
     background: chartreuse;
 }
-
-.administrator, .demotywatorking {
+.demotywatorking {
+    color: darkgoldenrod;
+}
+.administrator {
     color: red;
 }
 
