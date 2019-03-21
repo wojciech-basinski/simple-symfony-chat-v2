@@ -140,11 +140,7 @@ html, body {
     background: chartreuse;
 }
 
-.demotywatorking {
-    color: #FF0080
-}
-
-.administrator {
+.administrator, .demotywatorking {
     color: red;
 }
 
