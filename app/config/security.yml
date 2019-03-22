@@ -28,7 +28,8 @@ security:
             logout:
                 path: fos_user_security_logout
                 target: homepage
-            anonymous:    true
+            anonymous: true
+            switch_user: true
 
     access_control:
         - { path: /chat/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
