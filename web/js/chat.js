@@ -649,7 +649,7 @@ $(document).ready(function () {
             let start = message.indexOf('[img]') + "[img]".length;
             let end = message.indexOf('[/img]') - "[/img]".length + 1;
             let text = message.substr(start, end);
-            let link = (message.indexOf('http:') !== -1) ? 'https://phs-phsa.ga/chat/img/?url=' + encodeURI(text) : text;
+            let link = 'https://phs-phsa.ga/chat/img/?url=' + encodeURI(text);
             message = messageReplace(message, regex + text + regex2, '<img class="bbcode-img pointer" src="' + link + '" alt="' + text + '"/>')
         }
         if (message.indexOf('[yt]') !== -1 && message.indexOf('[/yt]') !== -1) {//todo
