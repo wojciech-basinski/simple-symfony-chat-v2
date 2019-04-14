@@ -659,23 +659,17 @@ $(document).ready(function () {
             let end = message.indexOf('[/yt]') - "[/yt]".length + 1;
             let text = message.substr(start, end);
             let replaceText;
-            if (text.indexOf("youtube.com/watch?v=") > -1) {
-                replaceText = transformLinkYT(text, "v=");
-            } else if (text.indexOf("youtu.be/") > -1) {
-                replaceText = transformLinkYT(text, "u.be/");
-            }
+            replaceText = transformLinkYT(text);
             message = messageReplace(message, regex + text + regex2, replaceText);
         }
         return message;
     }
 
-    function transformLinkYT(text, method) {
-        let youtubeArray = text.split(method);
+    function transformLinkYT(text) {
         //for now the youtube id is 11 character(64 bit), not likely to change anytime soon(hope not)
-        let youtubeId = youtubeArray[1].substring(0, 11);
         // youtubeClass = 'class="youtubeThis" rel="youtubeThis"';
-        let youtubeHref = 'https://www.youtube.com/embed/' + youtubeId + '?rel=0'; //final href with rel=0 parameter, no pesty related videos at the end of our chat video
-        return '<img class="youtube pointer" data-href="' + youtubeHref + '" src="https://img.youtube.com/vi/' + youtubeId + '/hqdefault.jpg" />';
+        let youtubeHref = 'https://www.youtube.com/embed/' + text + '?rel=0'; //final href with rel=0 parameter, no pesty related videos at the end of our chat video
+        return '(youtube)<img class="youtube pointer" data-href="' + youtubeHref + '" src="https://img.youtube.com/vi/' + text + '/hqdefault.jpg" />';
     }
 
     function messageReplace(message, whatReplace, replace) {
@@ -813,7 +807,7 @@ $(document).ready(function () {
     }
 
     function transformYoutube(inputText) {
-        var replacePattern1 = /(\b(https?):\/\/\b(www\.?)youtu[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        var replacePattern1 = /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/gim;
         return inputText.replace(replacePattern1, '[yt]$1[/yt]');
     }
 
