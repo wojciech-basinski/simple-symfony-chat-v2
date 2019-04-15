@@ -649,7 +649,12 @@ $(document).ready(function () {
             let start = message.indexOf('[img]') + "[img]".length;
             let end = message.indexOf('[/img]') - "[/img]".length + 1;
             let text = message.substr(start, end);
-            let link = 'https://phs-phsa.ga/chat/img/?url=' + encodeURI(text);
+            let link = '';
+            if (text.indexOf('fbcdn.net') == -1) {
+               link = 'https://phs-phsa.ga/chat/img/?url=' + encodeURI(text);
+            } else {
+                link = text;
+            }
             message = messageReplace(message, regex + text + regex2, '<img class="bbcode-img pointer" src="' + link + '" alt="' + text + '"/>')
         }
         if (message.indexOf('[yt]') !== -1 && message.indexOf('[/yt]') !== -1) {//todo
