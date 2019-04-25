@@ -32,7 +32,7 @@ class ChatConfig
     /**
      * @var bool Login by phpBB forum user
      */
-    private const PHPBB = 1;
+    private const PHPBB = 0;
 
     /**
      * @var int moderator channel id

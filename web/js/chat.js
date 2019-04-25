@@ -26,6 +26,7 @@ $(document).ready(function () {
     var usersOnline = [];
     var channelsOnChat = [];
     var messagesOnChannel = [];
+    var rollLocked = false;
 
     window.onblur = function () {
         active = false;
@@ -41,6 +42,22 @@ $(document).ready(function () {
 
     statusInProgress();
     startChat();
+
+    $(document).on('click', '#roll-img', function() {
+        if (rollLocked === false) {
+            sendMessage('/roll 2d100');
+            rollLocked = true;
+            $(this).removeClass('kursor').addClass('disabled');
+            setTimeout(removeLocked, 30000);
+        }
+    });
+
+    function removeLocked() {
+        if (rollLocked === true) {
+            rollLocked = false;
+            $('#roll-img').removeClass('disabled').addClass('kursor');
+        }
+    }
 
     //insert private message text in message-text%
     $(document).on('click', '.online-user, .icon-mail', function () {
@@ -176,9 +193,11 @@ $(document).ready(function () {
         $('#message-text').focus();
     }
 
-    function sendMessage() {
+    function sendMessage(text) {
         statusInProgress();
-        var text = $('#message-text').val();
+        if (text === undefined) {
+            text = $('#message-text').val();
+        }
         if (text === '') {
             return;
         }

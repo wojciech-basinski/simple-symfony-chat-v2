@@ -26,9 +26,9 @@ framework:
         engines: ['twig']
     default_locale: '%locale%'
     trusted_hosts: ~
-    assets:
-        base_urls:
-        - 'https://phs-phsa.ga/chat/'
+#    assets:
+#        base_urls:
+#        - 'https://phs-phsa.ga/chat/'
 
     session:
         # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
