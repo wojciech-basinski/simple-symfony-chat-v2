@@ -116,7 +116,6 @@ html, body {
     margin-right: 2px;
 }
 
-
 .disabled {
     cursor: not-allowed;
 }
@@ -393,4 +392,10 @@ html, body {
     position: absolute;
     left: 80%;
     top: -25px;
+}
+
+blockquote {
+    margin: 0;
+    padding: 0 0 0 10px;
+    display: inline-block;
 }

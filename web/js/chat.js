@@ -645,8 +645,8 @@ $(document).ready(function () {
         if (message.indexOf('[quote]') !== -1 && message.indexOf('[/quote]') !== -1) {
             let regex = /\[quote\]/g;
             let regex2 = /\[\/quote\]/g;
-            message = messageReplace(message, regex, '<q>');
-            message = messageReplace(message, regex2, '</q>');
+            message = messageReplace(message, regex, '<blockquote><p>');
+            message = messageReplace(message, regex2, '</p></blockquote><br />');
         }
         if (message.indexOf('[code]') !== -1 && message.indexOf('[/code]') !== -1) {
             let regex = /\[code\]/g;
