@@ -79,7 +79,7 @@ html, body {
     color: #464a4c;
     vertical-align: middle;
     background: #fff url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23333' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center;
-    background-size: auto auto;
+    /*background-size: auto auto;*/
     -webkit-background-size: 8px 10px;
     background-size: 8px 10px;
     border: 1px solid rgba(0, 0, 0, .15);
@@ -101,6 +101,10 @@ html, body {
     display: inline-block;
 }
 
+#roll {
+    display: inline-block;
+}
+
 .emoticon-text {
     max-width: 25px;
     max-height: 25px;
@@ -110,6 +114,11 @@ html, body {
     width: 16px;
     height: 16px;
     margin-right: 2px;
+}
+
+
+.disabled {
+    cursor: not-allowed;
 }
 
 .emoticon-img:hover {
