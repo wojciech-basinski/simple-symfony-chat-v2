@@ -60,7 +60,7 @@ class UserOnline
     /**
      * @var bool
      *
-     * @ORM\Column(name="afk", type="boolean", nullable=true)
+     * @ORM\Column(name="afk", type="boolean", nullable=false)
      */
     private $afk = false;
 
