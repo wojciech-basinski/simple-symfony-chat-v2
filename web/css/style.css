@@ -399,3 +399,7 @@ blockquote {
     padding: 0 0 0 10px;
     display: inline-block;
 }
+
+mark {
+    background: #7F7C6A;
+}
