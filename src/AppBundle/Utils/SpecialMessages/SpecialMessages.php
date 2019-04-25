@@ -103,8 +103,8 @@ class SpecialMessages
                 return $this->unbanUser($textSplitted, $user);
             case '/banlist':
                 return $this->banList($user);
-            case '/remind':
-                return $this->setReminder($textSplitted, $user);
+//            case '/remind':
+//                return $this->setReminder($textSplitted, $user);
             default:
                 return ['userId' => false];
         }
