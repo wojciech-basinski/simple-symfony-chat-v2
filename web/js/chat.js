@@ -709,12 +709,6 @@ $(document).ready(function () {
             message = parseLinks(message);
         }
         message = messageCreateParts(message);
-        if (checkIfMessageHaveNick(message)) {
-            let insertLightSpan = '<span class="light">';
-            let start = message.search("@" + self.username);
-            let end = start + 1 + self.username.length + insertLightSpan.length;
-            message = message.insert(start, insertLightSpan).insert(end, '</span>');
-        }
         if (pm === 'private-message') {
             let insertPwClass = '<span class="private-message">';
             let start = 0;
@@ -753,6 +747,42 @@ $(document).ready(function () {
             parts.push(second);
             message = message.substr(end, message.length - 1);
         }
+        var regex = /@/gi, result, indices = [];
+        while ( (result = regex.exec(message)) ) {
+            indices.push(result.index);
+        }
+        var addedSpaces = 0;
+        indices.forEach(function(value, index, array) {
+            let start = value;
+            let insertLightSpan = '<mark>';
+            let insertLightSpanEnd = '</mark>';
+            let end;
+            if (message.indexOf("@" + self.username, start) === start) {
+                insertLightSpan = '<span class="light">';
+                insertLightSpanEnd = '</span>';
+                end = start + 1 + self.username.length;
+            } else {
+                var space = message.indexOf(" ", start + 1);
+                var endOfMessage = message.length;
+                var nextAt = message.indexOf("@", start + 1);
+                if (space < 0) {
+                    space = 9999999999;
+                }
+                if (nextAt < 0) {
+                    nextAt = 9999999999;
+                }
+                end = Math.min(space, endOfMessage, nextAt);
+            }
+
+            message = message.insert(start, insertLightSpan).insert(end + insertLightSpan.length, insertLightSpanEnd);
+
+            if (indices[index + 1]) {
+                addedSpaces += insertLightSpan.length + insertLightSpanEnd.length;
+                indices[index + 1] += addedSpaces;
+            }
+
+        });
+
         if (message.length) {
             parts.push(message);
         }
