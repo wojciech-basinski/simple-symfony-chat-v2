@@ -180,6 +180,11 @@ class Message
 
         $special = $this->specialMessages->specialMessages($text, $user);
 
+        if ($this->session->get('afk') === true && $special === ['userId' => false]) {
+            $this->specialMessages->specialMessages('/afk', $user);
+            $special['count'] = 1;
+        }
+
         if ($special['userId'] == ChatConfig::getBotId()) {
             $originalUser = $user;
             $user = $this->em->find('AppBundle:User', ChatConfig::getBotId());
@@ -228,8 +233,10 @@ class Message
             if ($messages) {
                 $this->changeMessagesToArray($messages);
                 foreach ($messages as &$message) {
-                    if ($message->getId() === $special['message']->getId()) {
-                        unset($message);
+                    if (isset($special['message'])) {
+                        if ($message['id'] === $special['message']->getId()) {
+                            unset($message);
+                        }
                     }
                 }
                 $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);

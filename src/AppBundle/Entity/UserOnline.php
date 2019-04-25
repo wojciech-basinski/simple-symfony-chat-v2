@@ -36,39 +36,52 @@ class UserOnline
     private $onlineTime;
 
     /**
+     *
+     * @var User
      * @ORM\ManyToOne(targetEntity="User", inversedBy="userOnline", fetch="EAGER")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $userInfo;
 
     /**
-     * $var int
+     * @var int
      *
      * @ORM\Column(name="channel", type="integer")
      */
     private $channel;
 
     /**
-     * $var bool
+     * @var bool
      *
      * @ORM\Column(name="typing", type="boolean", nullable=true)
      */
     private $typing;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="afk", type="boolean", nullable=true)
+     */
+    private $afk = false;
+
+    /**
      * @return int Channel's id
      */
-    public function getChannel()
+    public function getChannel(): int
     {
         return $this->channel;
     }
 
     /**
      * @param int $channel Channel's id
+     *
+     * @return UserOnline
      */
-    public function setChannel($channel)
+    public function setChannel(int $channel): UserOnline
     {
         $this->channel = $channel;
+
+        return $this;
     }
 
     /**
@@ -84,9 +97,9 @@ class UserOnline
     /**
      * Gets User's role from relation
      *
-     * @return int Return user's role as text
+     * @return string Return user's role as text
      */
-    public function getRole():string
+    public function getRole(): string
     {
         return $this->userInfo->getChatRoleAsText();
     }
@@ -96,7 +109,7 @@ class UserOnline
      *
      * @return int
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -108,7 +121,7 @@ class UserOnline
      *
      * @return UserOnline
      */
-    public function setUserId($userId)
+    public function setUserId(int $userId): UserOnline
     {
         $this->userId = $userId;
 
@@ -120,7 +133,7 @@ class UserOnline
      *
      * @return int
      */
-    public function getUserId()
+    public function getUserId(): int
     {
         return $this->userId;
     }
@@ -132,7 +145,7 @@ class UserOnline
      *
      * @return UserOnline
      */
-    public function setOnlineTime($onlineTime)
+    public function setOnlineTime(\DateTime $onlineTime): UserOnline
     {
         $this->onlineTime = $onlineTime;
 
@@ -142,7 +155,7 @@ class UserOnline
     /**
      * @return User User's info from relation
      */
-    public function getUserInfo()
+    public function getUserInfo(): User
     {
         return $this->userInfo;
     }
@@ -152,7 +165,7 @@ class UserOnline
      *
      * @return \DateTime
      */
-    public function getOnlineTime()
+    public function getOnlineTime(): \DateTime
     {
         return $this->onlineTime;
     }
@@ -161,10 +174,14 @@ class UserOnline
      * Set userInfo
      *
      * @param User $userInfo
+     *
+     * @return UserOnline
      */
-    public function setUserInfo($userInfo)
+    public function setUserInfo(User $userInfo): UserOnline
     {
         $this->userInfo = $userInfo;
+
+        return $this;
     }
 
     /**
@@ -172,13 +189,14 @@ class UserOnline
      *
      * @return array Array with information about user
      */
-    public function createArrayToJson()
+    public function createArrayToJson(): array
     {
         return [
             'user_id' => $this->userId,
             'username' => $this->userInfo->getUsername(),
             'user_role' => $this->userInfo->getChatRoleAsText(),
-            'typing' => $this->typing
+            'typing' => $this->typing,
+            'afk' => $this->afk
         ];
     }
 
@@ -187,7 +205,7 @@ class UserOnline
      *
      * @return UserOnline
      */
-    public function setTyping($typing)
+    public function setTyping(bool $typing): UserOnline
     {
         $this->typing = $typing;
 
@@ -197,9 +215,28 @@ class UserOnline
     /**
      * @return mixed
      */
-    public function getTyping()
+    public function getTyping(): bool
     {
         return $this->typing;
+    }
+
+    /**
+     * @param bool $afk
+     *
+     * @return UserOnline
+     */
+    public function setAfk(bool $afk): UserOnline
+    {
+        $this->afk = $afk;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAfk(): bool
+    {
+        return $this->afk;
     }
 }
 

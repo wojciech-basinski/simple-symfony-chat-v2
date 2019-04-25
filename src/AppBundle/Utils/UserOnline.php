@@ -5,6 +5,7 @@ namespace AppBundle\Utils;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\UserOnline as UserOnlineEntity;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Service to add, check and delete from Users online in database
@@ -22,17 +23,16 @@ class UserOnline
      * @var ChatConfig
      */
     private $config;
-
     /**
-     * UserOnline constructor.
-     *
-     * @param EntityManagerInterface $em
-     * @param ChatConfig $config
+     * @var SessionInterface
      */
-    public function __construct(EntityManagerInterface $em, ChatConfig $config)
+    private $session;
+
+    public function __construct(EntityManagerInterface $em, ChatConfig $config, SessionInterface $session)
     {
         $this->em = $em;
         $this->config = $config;
+        $this->session = $session;
     }
 
     /**
@@ -54,6 +54,8 @@ class UserOnline
         ) {
             return 0;
         }
+
+        $this->session->set('afk', false);
 
         $online = new UserOnlineEntity();
 
