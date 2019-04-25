@@ -56,6 +56,13 @@ class UserOnline
     private $typing;
 
     /**
+     * $var bool
+     *
+     * @ORM\Column(name="afk", type="boolean", nullable=true)
+     */
+    private $afk = false;
+
+    /**
      * @return int Channel's id
      */
     public function getChannel()
@@ -178,7 +185,8 @@ class UserOnline
             'user_id' => $this->userId,
             'username' => $this->userInfo->getUsername(),
             'user_role' => $this->userInfo->getChatRoleAsText(),
-            'typing' => $this->typing
+            'typing' => $this->typing,
+            'afk' => $this->afk
         ];
     }
 
@@ -200,6 +208,17 @@ class UserOnline
     public function getTyping()
     {
         return $this->typing;
+    }
+
+    public function setAfk($afk)
+    {
+        $this->afk = $afk;
+        return $this;
+    }
+
+    public function getAfk()
+    {
+        return $this->afk;
     }
 }
 

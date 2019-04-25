@@ -43,6 +43,8 @@ chat:
     banned: User chat.user has been banned
     unbanned: User chat.user has been unbanned
     bannedUser: "Banned users: "
+    afk: User chat.user is afk now
+    returnFromAfk: User chat.user returns to chat
 
 error:
     userNotFound: User chat.nick not found

@@ -317,16 +317,15 @@ $(document).ready(function () {
 
     function refreshUsersOnlineBox(users) {
         users.forEach(function (element) {
-            var value = $('.online-user[data-value="' + element.username + '"]').text();
+            var text = element.username;
+
             if (element.typing) {
-                if (value.indexOf("(") === -1) {
-                    $('.online-user[data-value="' + element.username + '"]').text(element.username + ' (...)');
-                }
-            } else {
-                if (value.indexOf("(") !== -1) {
-                    $('.online-user[data-value="' + element.username + '"]').text(element.username);
-                }
+                text += ' (...)';
             }
+            if (element.afk) {
+                text += ' (afk)'
+            }
+            $('.online-user[data-value="' + element.username + '"]').text(text);
         });
     }
 

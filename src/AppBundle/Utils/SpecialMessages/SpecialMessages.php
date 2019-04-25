@@ -78,6 +78,10 @@ class SpecialMessages
                 return $this->inviteToShow($textSplitted);
             case '/uninvite':
                 return $this->uninviteToShow($textSplitted);
+            case '/afk':
+                return $this->afkToShow($textSplitted);
+            case '/returnAfk':
+                return $this->returnAfkToShow($textSplitted);
             default:
                 return ['userId' => false];
         }
@@ -103,6 +107,9 @@ class SpecialMessages
                 return $this->unbanUser($textSplitted, $user);
             case '/banlist':
                 return $this->banList($user);
+            case '/zw':
+            case '/afk':
+                return $this->afk($user);
 //            case '/remind':
 //                return $this->setReminder($textSplitted, $user);
             default:
@@ -590,5 +597,89 @@ class SpecialMessages
     private function setReminder(array $textSplitted, User $user): array
     {
 
+    }
+
+    private function afk(User $user): array
+    {
+        $userOnline = $this->em->getRepository(UserOnline::class)->findOneBy(['userId' => $user->getId()]);
+        $bot = $this->em->find(User::class, ChatConfig::getBotId());
+        if ($userOnline->getAfk()) {
+            return $this->removeAfk($user, $userOnline, $bot);
+        }
+
+        $userOnline->setAfk(true);
+        $this->session->set('afk', true);
+
+        $text  = $this->translator->trans(
+            'chat.afk',
+            ['chat.user' => $user->getUsername()],
+            'chat',
+            $this->locale
+        );
+        $message = (new Message())
+            ->setUserId(ChatConfig::getBotId())
+            ->setUserInfo($bot)
+            ->setText('/afk '.$user->getUsername())
+            ->setDate(new \DateTime())
+            ->setChannel($userOnline->getChannel());
+
+        $this->em->persist($message);
+        $this->em->flush();
+
+        return ['userId' => ChatConfig::getBotId(), 'message' => $message, 'text' => $text, 'count' => 1];
+    }
+
+    private function removeAfk(User $user, UserOnline $userOnline, User $bot): array
+    {
+        $userOnline->setAfk(false);
+        $this->session->set('afk', false);
+
+        $text = $this->translator->trans(
+            'chat.returnFromAfk',
+            ['chat.user' => $user->getUsername()],
+            'chat',
+            $this->locale
+        );
+        $message = (new Message())
+            ->setUserId(ChatConfig::getBotId())
+            ->setUserInfo($bot)
+            ->setText('/returnAfk ' . $user->getUsername())
+            ->setDate(new \DateTime())
+            ->setChannel($userOnline->getChannel());
+
+        $this->em->persist($message);
+        $this->em->flush();
+
+        return ['userId' => ChatConfig::getBotId(), 'message' => $message, 'text' => $text, 'count' => 1];
+    }
+
+    private function afkToShow(array $text): array
+    {
+        $text = $this->translator->trans(
+            'chat.afk',
+            ['chat.user' => $text[1]],
+            'chat',
+            $this->locale
+        );
+
+        return [
+            'showText' => $text,
+            'userId' => ChatConfig::getBotId()
+        ];
+    }
+
+    private function returnAfkToShow(array $text)
+    {
+        $text = $this->translator->trans(
+            'chat.returnFromAfk',
+            ['chat.user' => $text[1]],
+            'chat',
+            $this->locale
+        );
+
+        return [
+            'showText' => $text,
+            'userId' => ChatConfig::getBotId()
+        ];
     }
 }

@@ -43,6 +43,8 @@ chat:
     banned: Użytkownik chat.user został zbanowany
     unbanned: Użytkownik chat.user został odbanowany
     bannedUser: "Zbanowani użytkownicy: "
+    afk: Użytkownik chat.user zaraz wraca
+    returnFromAfk: Użytkownik chat.user jest już dostępny
 
 error:
     userNotFound: Użytkownik chat.nick nie znaleziony
