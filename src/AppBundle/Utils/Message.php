@@ -166,26 +166,30 @@ class Message
      * Validates messages and adds message to database, checks if there are new messages from last refresh,
      * save sent message's id to session as lastid
      *
-     * @param User $user User instance, who is sending message
-     * @param string $text Message's text
+     * @param User        $user User instance, who is sending message
+     * @param string|null $text Message's text
      *
      * @return array status of adding messages, and new messages from last refresh
+     * @throws \Exception
      */
-    public function addMessageToDatabase(User $user, string $text): array
+    public function addMessageToDatabase(User $user, ?string $text): array
     {
         $channel = $this->session->get('channel');
         if (false === $this->validateMessage($user, $channel, $text)) {
-            return ['status' => 'false'];
+            return $this->returnFail();
         }
 
         $special = $this->specialMessages->specialMessages($text, $user);
-
-        if ($this->session->get('afk') === true && $special === ['userId' => false]) {
+        $fail = $special['fail'] ?? null;
+        if ($fail) {
+            return $this->returnFail();
+        }
+        if ($special === ['userId' => false] && $this->session->get('afk') === true) {
             $this->specialMessages->specialMessages('/afk', $user);
             $special['count'] = 1;
         }
 
-        if ($special['userId'] == ChatConfig::getBotId()) {
+        if ($special['userId'] === ChatConfig::getBotId()) {
             $originalUser = $user;
             $user = $this->em->find('AppBundle:User', ChatConfig::getBotId());
             $text = $special['text'];
@@ -217,7 +221,7 @@ class Message
             $id = $message->getId();
             $count = 1;
         } else {
-            $id = ($special['message'] != false) ? $special['message']->getId() : ($this->session->get('lastId') + $special['count']);
+            $id = ($special['message'] !== false) ? $special['message']->getId() : ($this->session->get('lastId') + $special['count']);
             $count = $special['count'];
         }
 
@@ -322,22 +326,31 @@ class Message
      *
      * @return bool status
      */
-    private function validateMessage(User $user, int $channel, string $text): bool
+    private function validateMessage(User $user, int $channel, ?string $text): bool
     {
+        if ($text === null) {
+            $this->session->set('errorMessage', 'Wiadomośc nie może być pusta');
+            return false;
+        }
         $text = strtolower(trim($text));
-        if ((strlen($text) <= 0)) {
+        if (strlen($text) <= 0) {
+            $this->session->set('errorMessage', 'Wiadomośc nie może być pusta');
             return false;
         }
         if ($user->getId() <= 0) {
+            $this->session->set('errorMessage', 'Nie możesz wysyłać wiadomości będąc nie zalogowanym');
             return false;
         }
         if (!array_key_exists($channel, $this->config->getChannels($user))) {
+            $this->session->set('errorMessage', 'Nie możesz pisać na tym kanale');
             return false;
         }
         if (strpos($text, '(pm)') === 0) {
+            $this->session->set('errorMessage', 'Wiadomośc nie może zaczynać się od (pm)');
             return false;
         }
         if (strpos($text, '(pw)') === 0) {
+            $this->session->set('errorMessage', 'Wiadomośc nie może zaczynać się od (pw)');
             return false;
         }
         return true;
@@ -382,5 +395,13 @@ class Message
     private function nl2br(string $string): string
     {
         return str_replace(["\r\n", "\r", "\n"], '<br />', $string);
+    }
+
+    private function returnFail(): array
+    {
+        return [
+            'status' => 'false',
+            'errorMessage' => $this->session->get('errorMessage')
+        ];
     }
 }

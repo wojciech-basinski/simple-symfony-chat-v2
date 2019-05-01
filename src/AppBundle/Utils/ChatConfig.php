@@ -63,6 +63,10 @@ class ChatConfig
      * @var int Bot Id
      */
     private const BOT_ID = 1;
+    /**
+     * @var int seconds in cooldown for roll for users
+     */
+    private const ROLL_COOL_DOWN = 30;
 
     /**
      * @var int added to private channel id
@@ -86,6 +90,7 @@ class ChatConfig
      * @var null|array
      */
     private $invitations = null;
+
 
     public function __construct(
         AuthorizationCheckerInterface $auth,
@@ -151,6 +156,11 @@ class ChatConfig
     public function getUserPrivateMessageChannelId(User $user): int
     {
         return self::PRIVATE_MESSAGE_ADD + $user->getId();
+    }
+
+    public function getRollCoolDown(): int
+    {
+        return self::ROLL_COOL_DOWN;
     }
 
     private function specialChannels(): array
