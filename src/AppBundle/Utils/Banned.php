@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\User;
@@ -14,7 +15,7 @@ class Banned
     /**
      * @var User|null
      */
-    private $user = null;
+    private $user;
 
     public function __construct(EntityManagerInterface $em)
     {

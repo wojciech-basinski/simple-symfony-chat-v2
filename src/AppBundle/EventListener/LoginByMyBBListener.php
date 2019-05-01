@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\EventListener;
 
@@ -43,9 +43,14 @@ class LoginByMyBBListener implements EventSubscriberInterface
      */
     private $userManager;
 
-    public function __construct(Session $session, EntityManagerInterface $em, TokenStorageInterface $tokenStorage,
-        RouterInterface $router, RequestStack $request, UserManagerInterface $userManager)
-    {
+    public function __construct(
+        Session $session,
+        EntityManagerInterface $em,
+        TokenStorageInterface $tokenStorage,
+        RouterInterface $router,
+        RequestStack $request,
+        UserManagerInterface $userManager
+    ) {
         $this->em = $em;
         $this->tokenStorage = $tokenStorage;
         $this->router = $router;
@@ -54,7 +59,7 @@ class LoginByMyBBListener implements EventSubscriberInterface
         $this->request = $request->getCurrentRequest();
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event): void
     {
         if (!ChatConfig::getMyBB()) {
             return;
@@ -62,7 +67,7 @@ class LoginByMyBBListener implements EventSubscriberInterface
         $event->stopPropagation();
         $cookie = $this->request->cookies->get('mybbuser');
         if (!$cookie) {
-            $event->setController(function()  {
+            $event->setController(function () {
                 if ($this->request->server->get('HTTPS')) {
                     $path = 'https://';
                 } else {
@@ -82,16 +87,16 @@ class LoginByMyBBListener implements EventSubscriberInterface
             $value->execute();
             $value = $value->fetchAll(\PDO::FETCH_ASSOC);
 
-            if ($value[0]['loginkey'] == $cookieParts[1]) {
+            if ($value[0]['loginkey'] === $cookieParts[1]) {
                 if (!$this->em->find('AppBundle:User', $userId)) {
                     $user = new User();
                     $user->setUsername($value[0]['username']);
                     $user->setId($userId);
                     $user->setEmail($value[0]['email']);
                     $user->setPassword('');
-                    if ($value[0]['usergroup'] == 4) {
+                    if ($value[0]['usergroup'] === 4) {
                         $user->setRoles(['ROLE_ADMIN']);
-                    } elseif ($value[0]['usergroup'] == 3) {
+                    } elseif ($value[0]['usergroup'] === 3) {
                         $user->setRoles(['ROLE_MODERATOR']);
                     } else {
                         $user->setRoles(['ROLE_USER']);
@@ -107,23 +112,22 @@ class LoginByMyBBListener implements EventSubscriberInterface
                 } else {
                     $this->logUser($value);
                     $path = $this->router->generate('add_online');
-                    $event->setController(function() use ($path) {
+                    $event->setController(static function () use ($path) {
                         return new RedirectResponse($path);
                     });
                 }
-
             }
         }
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
         ];
     }
 
-    private function logUser(array $value)
+    private function logUser(array $value): void
     {
         $user = $this->userManager->findUserByUsername($value[0]['username']);
 

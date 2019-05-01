@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\EventListener;
 
@@ -46,9 +46,14 @@ class LoginByPhpBBListener implements EventSubscriberInterface
      */
     private $userManager;
 
-    public function __construct(Session $session, EntityManagerInterface $em, TokenStorageInterface $tokenStorage,
-                                RouterInterface $router, RequestStack $request, UserManagerInterface $userManager)
-    {
+    public function __construct(
+        Session $session,
+        EntityManagerInterface $em,
+        TokenStorageInterface $tokenStorage,
+        RouterInterface $router,
+        RequestStack $request,
+        UserManagerInterface $userManager
+    ) {
         $this->em = $em;
         $this->tokenStorage = $tokenStorage;
         $this->router = $router;
@@ -57,7 +62,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
         $this->request = $request->getCurrentRequest();
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event): void
     {
         if (!ChatConfig::getPhpBB()) {
             return;

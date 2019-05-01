@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -42,76 +43,40 @@ class ListPhs
     private $date;
 
 
-    /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-
-    /**
-     * Set username.
-     *
-     * @param string $username
-     *
-     * @return List
-     */
-    public function setUsername($username): ListPhs
+    public function setUsername(string $username): ListPhs
     {
         $this->username = $username;
 
         return $this;
     }
 
-    /**
-     * Get username.
-     *
-     * @return string
-     */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * Set date.
-     *
-     * @param \DateTime $date
-     *
-     * @return List
-     */
-    public function setDate($date)
+    public function setDate(\DateTime $date)
     {
         $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * Get date.
-     *
-     * @return \DateTime
-     */
-    public function getDate()
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @return int
-     */
     public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @param int $userId
-     */
     public function setUserId(int $userId): ListPhs
     {
         $this->userId = $userId;

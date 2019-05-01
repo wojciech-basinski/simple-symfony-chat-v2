@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\EventListener;
 
@@ -16,7 +16,7 @@ class RegistrationCompleteListener implements EventSubscriberInterface
      */
     private $router;
 
-    public  function __construct(UrlGeneratorInterface $router)
+    public function __construct(UrlGeneratorInterface $router)
     {
         $this->router = $router;
     }
@@ -33,11 +33,10 @@ class RegistrationCompleteListener implements EventSubscriberInterface
      * When the user registration is completed redirect
      * to the add user online to database page
      */
-    public  function  onUserRegistrationComplete(FormEvent $event): void
+    public function onUserRegistrationComplete(FormEvent $event): void
     {
         $url = $this->router->generate('add_online');
 
         $event->setResponse(new RedirectResponse($url));
     }
-
 }

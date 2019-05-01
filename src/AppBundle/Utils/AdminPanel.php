@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Utils;
 
@@ -26,7 +26,7 @@ class AdminPanel
      *
      * @return array Array of Users entities
      */
-    public function getAllUsers()
+    public function getAllUsers(): array
     {
         return $this->em->getRepository('AppBundle:User')->findAll();
     }
@@ -38,7 +38,7 @@ class AdminPanel
      *
      * @param string $role role that User will have after changing
      */
-    public function changeUsersRole(int $id, string $role)
+    public function changeUsersRole(int $id, string $role): void
     {
         $user = $this->em->getRepository('AppBundle:User')->find($id);
         if ($user === null) {

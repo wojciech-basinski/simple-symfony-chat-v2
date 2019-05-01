@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Entity;
 
@@ -60,7 +60,7 @@ class Message
     /**
      * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
      */
-    private $deletedAt = null;
+    private $deletedAt;
 
     /**
      * @var string
@@ -68,20 +68,13 @@ class Message
      */
     private $ip;
 
-    /**
-     * @param User $userInfo User instance
-     * @return $this
-     */
-    public function setUserInfo(User $userInfo)
+    public function setUserInfo(User $userInfo): Message
     {
         $this->userInfo = $userInfo;
 
         return $this;
     }
 
-    /**
-     * @return string Username
-     */
     public function getUsername(): string
     {
         return $this->userInfo->getUsername();
@@ -92,119 +85,75 @@ class Message
         return $this->userInfo->getAvatar();
     }
 
-    /**
-     * @return string Return user's role as text
-     */
     public function getRole(): string
     {
         return $this->userInfo->getChatRoleAsText();
     }
 
-    /**
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param integer $userId
-     * @return Message
-     */
-    public function setUserId($userId)
+    public function setUserId(?int $userId): Message
     {
         $this->userId = $userId;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getUserId()
+    public function getUserId(): ?int
     {
         return $this->userId;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return Message
-     */
-    public function setDate($date)
+    public function setDate(\DateTime $date): Message
     {
         $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate()
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param string $text
-     * @return Message
-     */
-    public function setText($text)
+    public function setText(string $text): Message
     {
         $this->text = $text;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
 
-    /**
-     * @param integer $channel
-     * @return Message
-     */
-    public function setChannel($channel)
+    public function setChannel(int $channel): Message
     {
         $this->channel = $channel;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getChannel()
+    public function getChannel(): int
     {
         return $this->channel;
     }
 
-    /**
-     * @return UserInterface
-     */
     public function getUserInfo(): UserInterface
     {
         return $this->userInfo;
     }
 
-    /**
-     * @param \DateTimeInterface $deletedAt
-     * @return Message
-     */
     public function setDeletedAt(\DateTimeInterface $deletedAt)
     {
         $this->deletedAt = $deletedAt;
         return $this;
     }
 
-    /**
-     * @return null|\DateTimeInterface
-     */
     public function getDeletedAt(): ?\DateTimeInterface
     {
         return $this->deletedAt;
@@ -215,23 +164,14 @@ class Message
         return self::class . ':' . $this->id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getIp(): ?string
     {
         return $this->ip;
     }
 
-    /**
-     * @param string $ip
-     *
-     * @return Message
-     */
     public function setIp(string $ip): Message
     {
         $this->ip = $ip;
         return $this;
     }
 }
-

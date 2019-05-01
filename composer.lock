@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11d1a30137e5dd631d9dee812997be26",
+    "content-hash": "dd14a1572122acfb1f4ce9d0f604f0c1",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -2733,16 +2733,16 @@
         },
         {
             "name": "sonata-project/doctrine-extensions",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/sonata-doctrine-extensions.git",
-                "reference": "a22ab48341d1a704cdb823d1d721383bf2feba24"
+                "reference": "aab1ede164095afcb1f40253c5d97258b930a433"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/sonata-doctrine-extensions/zipball/a22ab48341d1a704cdb823d1d721383bf2feba24",
-                "reference": "a22ab48341d1a704cdb823d1d721383bf2feba24",
+                "url": "https://api.github.com/repos/sonata-project/sonata-doctrine-extensions/zipball/aab1ede164095afcb1f40253c5d97258b930a433",
+                "reference": "aab1ede164095afcb1f40253c5d97258b930a433",
                 "shasum": ""
             },
             "require": {
@@ -2798,7 +2798,7 @@
                 "doctrine2",
                 "json"
             ],
-            "time": "2019-03-08T06:51:52+00:00"
+            "time": "2019-04-29T17:07:46+00:00"
         },
         {
             "name": "sonata-project/doctrine-orm-admin-bundle",
@@ -2954,6 +2954,57 @@
                 "xls"
             ],
             "time": "2019-04-17T21:05:17+00:00"
+        },
+        {
+            "name": "squizlabs/php_codesniffer",
+            "version": "3.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8",
+                "reference": "b8a7362af1cc1aadb5bd36c3defc4dda2cf5f0a8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0"
+            },
+            "bin": [
+                "bin/phpcs",
+                "bin/phpcbf"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "https://github.com/squizlabs/PHP_CodeSniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2019-04-10T23:49:02+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -3592,16 +3643,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v3.4.26",
+            "version": "v3.4.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "1b89e7baec9891c323bbf1ec81af77d901fc60c9"
+                "reference": "a9bb1182151d81054800aa4fa2680d92a5928a6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/1b89e7baec9891c323bbf1ec81af77d901fc60c9",
-                "reference": "1b89e7baec9891c323bbf1ec81af77d901fc60c9",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/a9bb1182151d81054800aa4fa2680d92a5928a6a",
+                "reference": "a9bb1182151d81054800aa4fa2680d92a5928a6a",
                 "shasum": ""
             },
             "require": {
@@ -3620,7 +3671,7 @@
                 "symfony/polyfill-mbstring": "~1.0",
                 "symfony/polyfill-php56": "~1.0",
                 "symfony/polyfill-php70": "~1.6",
-                "twig/twig": "^1.35|^2.4.4"
+                "twig/twig": "^1.40|^2.9"
             },
             "conflict": {
                 "phpdocumentor/reflection-docblock": "<3.0||>=3.2.0,<3.2.2",
@@ -3743,7 +3794,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2019-04-17T15:57:27+00:00"
+            "time": "2019-05-01T13:04:01+00:00"
         },
         {
             "name": "twig/extensions",
@@ -3802,16 +3853,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v2.8.1",
+            "version": "v2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "91cc2594d3143761ce0399c1caffd0b500ffe5b9"
+                "reference": "82a1c055c8ed4c4705023bfd0405f3c74db6e3ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/91cc2594d3143761ce0399c1caffd0b500ffe5b9",
-                "reference": "91cc2594d3143761ce0399c1caffd0b500ffe5b9",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/82a1c055c8ed4c4705023bfd0405f3c74db6e3ae",
+                "reference": "82a1c055c8ed4c4705023bfd0405f3c74db6e3ae",
                 "shasum": ""
             },
             "require": {
@@ -3827,7 +3878,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.8-dev"
+                    "dev-master": "2.9-dev"
                 }
             },
             "autoload": {
@@ -3865,7 +3916,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2019-04-16T17:14:24+00:00"
+            "time": "2019-04-28T06:57:38+00:00"
         }
     ],
     "packages-dev": [
@@ -4123,16 +4174,16 @@
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "4.3.0",
+            "version": "4.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "94fd0001232e47129dd3504189fa1c7225010d08"
+                "reference": "bdd9f737ebc2a01c06ea7ff4308ec6697db9b53c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/94fd0001232e47129dd3504189fa1c7225010d08",
-                "reference": "94fd0001232e47129dd3504189fa1c7225010d08",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/bdd9f737ebc2a01c06ea7ff4308ec6697db9b53c",
+                "reference": "bdd9f737ebc2a01c06ea7ff4308ec6697db9b53c",
                 "shasum": ""
             },
             "require": {
@@ -4170,7 +4221,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2017-11-30T07:14:17+00:00"
+            "time": "2019-04-30T17:48:53+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -4672,6 +4723,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2017-08-03T14:08:16+00:00"
         },
         {
@@ -5288,8 +5340,47 @@
             "time": "2017-12-07T15:36:41+00:00"
         },
         {
+            "name": "slevomat/coding-standard",
+            "version": "4.8.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/slevomat/coding-standard.git",
+                "reference": "bff96313d8c7c2ba57a4edb13c1c141df8988c58"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/slevomat/coding-standard/zipball/bff96313d8c7c2ba57a4edb13c1c141df8988c58",
+                "reference": "bff96313d8c7c2ba57a4edb13c1c141df8988c58",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1",
+                "squizlabs/php_codesniffer": "^3.4.0"
+            },
+            "require-dev": {
+                "jakub-onderka/php-parallel-lint": "1.0.0",
+                "phing/phing": "2.16.1",
+                "phpstan/phpstan": "0.9.2",
+                "phpstan/phpstan-phpunit": "0.9.4",
+                "phpstan/phpstan-strict-rules": "0.9",
+                "phpunit/phpunit": "7.5.1"
+            },
+            "type": "phpcodesniffer-standard",
+            "autoload": {
+                "psr-4": {
+                    "SlevomatCodingStandard\\": "SlevomatCodingStandard"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Slevomat Coding Standard for PHP_CodeSniffer complements Consistence Coding Standard by providing sniffs with additional checks.",
+            "time": "2019-01-03T13:15:50+00:00"
+        },
+        {
             "name": "symfony/phpunit-bridge",
-            "version": "v3.4.26",
+            "version": "v3.4.27",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/phpunit-bridge.git",

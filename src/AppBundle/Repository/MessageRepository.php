@@ -1,15 +1,16 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Repository;
 
 use AppBundle\Entity\User;
 use AppBundle\Utils\ChatConfig;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * MessageRepository
  *
  */
-class MessageRepository extends \Doctrine\ORM\EntityRepository
+class MessageRepository extends EntityRepository
 {
     /**
      * Gets Messages from database from last 24h ordered by date descending
@@ -34,7 +35,7 @@ class MessageRepository extends \Doctrine\ORM\EntityRepository
             ->setParameter('text', '/delete%')
             ->setParameter('textPrivate', '/%')
             ->setMaxResults(100)
-	    ->getQuery()
+            ->getQuery()
             ->getResult();
 
         return $this->sortByDateAsc($messages);
@@ -102,9 +103,8 @@ class MessageRepository extends \Doctrine\ORM\EntityRepository
             ->getOneOrNullResult();
         if ($message) {
             return $message->getId();
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     /**
@@ -150,7 +150,7 @@ class MessageRepository extends \Doctrine\ORM\EntityRepository
 
     private function sortByDateAsc(array $messages): array
     {
-        uasort($messages, function($a, $b) {
+        uasort($messages, static function ($a, $b) {
             return $a->getDate() <=> $b->getDate();
         });
 
@@ -160,5 +160,4 @@ class MessageRepository extends \Doctrine\ORM\EntityRepository
         }
         return $return;
     }
-
 }

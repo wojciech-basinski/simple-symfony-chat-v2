@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Entity;
 
@@ -64,19 +64,11 @@ class UserOnline
      */
     private $afk = false;
 
-    /**
-     * @return int Channel's id
-     */
     public function getChannel(): int
     {
         return $this->channel;
     }
 
-    /**
-     * @param int $channel Channel's id
-     *
-     * @return UserOnline
-     */
     public function setChannel(int $channel): UserOnline
     {
         $this->channel = $channel;
@@ -84,43 +76,21 @@ class UserOnline
         return $this;
     }
 
-    /**
-     * Gets User's username from relation
-     *
-     * @return string
-     */
     public function getUserName(): string
     {
         return $this->userInfo->getUsername();
     }
 
-    /**
-     * Gets User's role from relation
-     *
-     * @return string Return user's role as text
-     */
     public function getRole(): string
     {
         return $this->userInfo->getChatRoleAsText();
     }
 
-    /**
-     * Get id
-     *
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set userId
-     *
-     * @param int $userId
-     *
-     * @return UserOnline
-     */
     public function setUserId(int $userId): UserOnline
     {
         $this->userId = $userId;
@@ -128,23 +98,11 @@ class UserOnline
         return $this;
     }
 
-    /**
-     * Get userId
-     *
-     * @return int
-     */
     public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * Set onlineTime
-     *
-     * @param \DateTime $onlineTime
-     *
-     * @return UserOnline
-     */
     public function setOnlineTime(\DateTime $onlineTime): UserOnline
     {
         $this->onlineTime = $onlineTime;
@@ -152,31 +110,16 @@ class UserOnline
         return $this;
     }
 
-    /**
-     * @return User User's info from relation
-     */
     public function getUserInfo(): User
     {
         return $this->userInfo;
     }
 
-    /**
-     * Get onlineTime
-     *
-     * @return \DateTime
-     */
     public function getOnlineTime(): \DateTime
     {
         return $this->onlineTime;
     }
 
-    /**
-     * Set userInfo
-     *
-     * @param User $userInfo
-     *
-     * @return UserOnline
-     */
     public function setUserInfo(User $userInfo): UserOnline
     {
         $this->userInfo = $userInfo;
@@ -200,43 +143,26 @@ class UserOnline
         ];
     }
 
-    /**
-     * @param mixed $typing
-     *
-     * @return UserOnline
-     */
     public function setTyping(bool $typing): UserOnline
     {
         $this->typing = $typing;
 
         return $this;
-}
+    }
 
-    /**
-     * @return mixed
-     */
     public function getTyping(): bool
     {
         return $this->typing;
     }
 
-    /**
-     * @param bool $afk
-     *
-     * @return UserOnline
-     */
     public function setAfk(bool $afk): UserOnline
     {
         $this->afk = $afk;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getAfk(): bool
     {
         return $this->afk;
     }
 }
-

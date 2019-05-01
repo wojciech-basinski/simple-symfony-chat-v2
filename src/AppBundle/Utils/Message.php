@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Utils;
 
@@ -125,7 +125,7 @@ class Message
         $this->changeMessagesToArray($messages);
 
         $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
-        usort($messagesToDisplay, function ($a, $b) {
+        usort($messagesToDisplay, static function ($a, $b) {
             return $a <=> $b;
         });
 
@@ -155,7 +155,7 @@ class Message
 
         $this->changeMessagesToArray($messages);
         $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
-        usort($messagesToDisplay, function ($a, $b) {
+        usort($messagesToDisplay, static function ($a, $b) {
             return $a <=> $b;
         });
 
@@ -226,7 +226,7 @@ class Message
         }
 
         //check if there was new messages between last message and send message
-        if (($this->session->get('lastId') + $count) != $id) {
+        if (($this->session->get('lastId') + $count) !== $id) {
             $messages = $this->em->getRepository(MessageEntity::class)
                 ->getMessagesBetweenIds(
                     $this->session->get('lastId'),
@@ -243,6 +243,7 @@ class Message
                         }
                     }
                 }
+                unset($message);
                 $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
                 $id = end($messagesToDisplay)['id'];
             }
@@ -304,7 +305,7 @@ class Message
         $count = count($messages);
         for ($i = 0; $i < $count; $i++) {
             $textSplitted = explode(' ', $messages[$i]['text']);
-            if ($textSplitted[0] == '/delete') {
+            if ($textSplitted[0] === '/delete') {
                 unset($messages[$i]);
             }
             if (!$this->channel->checkIfUserCanBeOnThatChannel($user, $messages[$i]['channel'])) {
@@ -385,7 +386,7 @@ class Message
         ];
 
         $textSplitted = explode(' ', $message->getText());
-        if ($textSplitted[0] == '/delete') {
+        if ($textSplitted[0] === '/delete') {
             $returnedArray['id'] = $textSplitted[1];
             $returnedArray['text'] = 'delete';
         }
