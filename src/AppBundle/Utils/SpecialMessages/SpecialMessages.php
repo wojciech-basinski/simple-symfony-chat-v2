@@ -119,6 +119,18 @@ class SpecialMessages
 
     private function roll(array $text, User $user): array
     {
+        //todo przepisać na metodę
+        if ($this->config->getRollCoolDown()) {
+            $rollTime = $this->session->get('rollTime', time());
+            if ($rollTime > time()) {
+                $this->session->set(
+                    'errorMessage',
+                    'Nie możesz użyć kostki jeszcze przez ' . ($rollTime - time()) . ' sekund'
+                );
+                return ['fail' => 1];
+            }
+            $this->session->set('rollTime', time() + $this->config->getRollCoolDown());
+        }
         $dice = $this->createDice($text);
 
         $text = "/roll {$dice[0]}d{$dice[1]} {$user->getUsername()} ";

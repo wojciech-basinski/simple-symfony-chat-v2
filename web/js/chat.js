@@ -213,7 +213,7 @@ $(document).ready(function () {
             data: params
         }).done(function (json) {
             if (json.status === "false") {
-                $('#messages-box').append('<div class="message-error">An error occurred while sending message.</div>');
+                $('#messages-box').append('<div class="message-error">' + json.errorMessage + '</div>');
             } else {
                 insertSentMessage(json);
                 playSound(sendMessageSound);
