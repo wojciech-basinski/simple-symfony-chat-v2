@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Utils;
 
@@ -66,7 +66,7 @@ class Channel
         if (!$this->checkIfUserCanBeOnThatChannel($user, $channel)) {
             return false;
         }
-        $this->userOnline->updateUserOnline($user, $channel, 0);
+        $this->userOnline->updateUserOnline($user, $channel, false);
 
         $this->session->set('channel', $channel);
         $this->session->set('changedChannel', 1);

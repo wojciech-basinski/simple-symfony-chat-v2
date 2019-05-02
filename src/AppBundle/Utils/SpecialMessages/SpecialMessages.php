@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Utils\SpecialMessages;
 
@@ -121,15 +121,10 @@ class SpecialMessages
     {
         //todo przepisać na metodę
         if ($this->config->getRollCoolDown()) {
-            $rollTime = $this->session->get('rollTime', time());
-            if ($rollTime > time()) {
-                $this->session->set(
-                    'errorMessage',
-                    'Nie możesz użyć kostki jeszcze przez ' . ($rollTime - time()) . ' sekund'
-                );
-                return ['fail' => 1];
+            $fail = $this->checkRollCoolDown();
+            if ($fail) {
+                return $fail;
             }
-            $this->session->set('rollTime', time() + $this->config->getRollCoolDown());
         }
         $dice = $this->createDice($text);
 
@@ -154,9 +149,15 @@ class SpecialMessages
         ];
     }
 
+    /**
+     * @param int $max
+     *
+     * @return int
+     * @throws \Exception
+     */
     private function rollDice(int $max): int
     {
-        return mt_rand(1, $max);
+        return random_int(1, $max);
     }
 
     private function rollShow(array $text): array
@@ -166,7 +167,8 @@ class SpecialMessages
             $this->translator->trans(
                 'chat.roll',
                 ['chat.dice' => $textSplitted[0]],
-                'chat', $this->locale
+                'chat',
+                $this->locale
             ) . ' ' . $textSplitted[2];
 
         return [
@@ -196,7 +198,8 @@ class SpecialMessages
             ['chat.user' => $secondUser->getUsername()],
             'chat',
             $this->locale
-            ) . ' ' . $textSplitted[1];
+        )
+        . ' ' . $textSplitted[1];
 
         return ['userId' => false, 'message' => $message1, 'showText' => $showText, 'count' => 2];
     }
@@ -232,7 +235,8 @@ class SpecialMessages
             ['chat.user' => $textSplitted[0]],
             'chat',
             $this->locale
-            ) . ' ' . $textSplitted[1];
+        )
+        . ' ' . $textSplitted[1];
 
         return [
             'showText' => $text,
@@ -258,14 +262,16 @@ class SpecialMessages
                 $this->translator->trans('error.wrongUsername', [], 'chat', $this->locale);
             return ['userId' => ChatConfig::getBotId(), 'text' => $text, 'message' => false, 'count' => 0];
         }
-        if ($this->session->get('channel') == 1) {
+        if ($this->session->get('channel') === 1) {
             $text = $textSplitted[0] . ' ' .
                 $this->translator->trans('error.channelCant', [], 'chat', $this->locale);
             return ['userId' => ChatConfig::getBotId(), 'text' => $text, 'message' => false, 'count' => 0];
         }
         $userToInvite = $this->em->getRepository('AppBundle:User')->findOneBy(['username' => $textSplitted[1]]);
         if (!$userToInvite) {
-            $text = $textSplitted[0] . ' ' . $this->translator->trans('error.userNotFound',
+            $text = $textSplitted[0] . ' ' .
+                $this->translator->trans(
+                    'error.userNotFound',
                     ['chat.nick' => $textSplitted[1]],
                     'chat',
                     $this->locale
@@ -317,14 +323,16 @@ class SpecialMessages
                 $this->translator->trans('error.wrongUsername', [], 'chat', $this->locale);
             return ['userId' => ChatConfig::getBotId(), 'text' => $text, 'message' => false, 'count' => 0];
         }
-        if ($this->session->get('channel') == 1) {
+        if ($this->session->get('channel') === 1) {
             $text = $textSplitted[0] . ' ' .
                 $this->translator->trans('error.channelCantUninvite', [], 'chat', $this->locale);
             return ['userId' => ChatConfig::getBotId(), 'text' => $text, 'message' => false, 'count' => 0];
         }
         $userToInvite = $this->em->getRepository('AppBundle:User')->findOneBy(['username' => $textSplitted[1]]);
         if (!$userToInvite) {
-            $text = $textSplitted[0] . ' ' . $this->translator->trans('error.userNotFound',
+            $text = $textSplitted[0] . ' ' .
+                $this->translator->trans(
+                    'error.userNotFound',
                     ['chat.nick' => $textSplitted[1]],
                     'chat',
                     $this->locale
@@ -367,7 +375,7 @@ class SpecialMessages
     private function insertInviteMessages(User $user, User $userToInvite, bool $invite = true): void
     {
         $bot = $this->em->find('AppBundle:User', ChatConfig::getBotId());
-        $channel = ($this->session->get('channel') == $this->config->getUserPrivateMessageChannelId($user)) ?
+        $channel = ($this->session->get('channel') === $this->config->getUserPrivateMessageChannelId($user)) ?
             $user->getUsername() : $this->config->getChannels($user)[$this->session->get('channel')];
 
         $text = $invite ? "/invite {$user->getUsername()} $channel" : "/uninvite {$user->getUsername()} $channel";
@@ -597,18 +605,17 @@ class SpecialMessages
         if (count($dice) < 2) {
             return [0 => 2, 1 => 6];
         }
-        if (!(is_numeric($dice[0])) || $dice[0] <= 0 || $dice[0] > 100) {
+        if (!is_numeric($dice[0]) || $dice[0] <= 0 || $dice[0] > 100) {
             $dice[0] = 2;
         }
-        if (!(is_numeric($dice[1])) || $dice[1] <= 0 || $dice[1] > 100) {
+        if (!is_numeric($dice[1]) || $dice[1] <= 0 || $dice[1] > 100) {
             $dice[1] = 6;
         }
         return $dice;
     }
 
-    private function setReminder(array $textSplitted, User $user): array
+    private function setReminder(array $textSplitted, User $user): void//array
     {
-
     }
 
     private function afk(User $user): array
@@ -693,5 +700,19 @@ class SpecialMessages
             'showText' => $text,
             'userId' => ChatConfig::getBotId()
         ];
+    }
+
+    private function checkRollCoolDown(): ?array
+    {
+        $rollTime = $this->session->get('rollTime', time());
+        if ($rollTime > time()) {
+            $this->session->set(
+                'errorMessage',
+                'Nie możesz użyć kostki jeszcze przez ' . ($rollTime - time()) . ' sekund'
+            );
+            return ['fail' => 1];
+        }
+        $this->session->set('rollTime', time() + $this->config->getRollCoolDown());
+        return null;
     }
 }

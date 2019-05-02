@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Controller;
 
@@ -53,7 +53,7 @@ class ChatController extends Controller
             $session->set('channel', 1);
         }
 
-        if ($userOnline->updateUserOnline($user, $channel, 0)) {
+        if ($userOnline->updateUserOnline($user, $channel, false)) {
             return $this->redirectToRoute('banned');
         }
         $response = new Response();
@@ -67,7 +67,7 @@ class ChatController extends Controller
             'privateChannelId' => $config->getUserPrivateMessageChannelId($user)
         ]);
         $response->setContent($body);
-        $response->headers->set('Access-Control-Allow-Origin', 'https://youtube.com');//TODO array z youtueb
+        $response->headers->set('Access-Control-Allow-Origin', '*');//TODO array z youtueb
 
         return $response;
     }
@@ -120,7 +120,7 @@ class ChatController extends Controller
         ChatConfig $config,
         Translator $translator
     ): Response {
-        if ($request->request->get('chatIndex', null)) {
+        if ($request->request->get('chatIndex')) {
             $messages = $messageService->getMessagesInIndex($this->getUser());
         } else {
             $messages = $messageService->getMessagesFromLastId($this->getUser());
@@ -129,7 +129,7 @@ class ChatController extends Controller
         $typing = in_array($typing, [0, 1]) ? $typing : 0;
 
         $changeChannel = 0;
-        if ($userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), $typing)) {
+        if ($userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), (bool) $typing)) {
             return new JsonResponse(['banned']);
         }
 
@@ -220,7 +220,7 @@ class ChatController extends Controller
         if (!$channel) {
             return $this->json('false');
         }
-        $return = $channelService->changeChannelOnChat($this->getUser(), $channel);
+        $return = $channelService->changeChannelOnChat($this->getUser(), (int) $channel);
 
         return $this->json($return);
     }

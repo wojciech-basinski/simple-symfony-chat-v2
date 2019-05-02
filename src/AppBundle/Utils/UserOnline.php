@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Utils;
 
@@ -47,7 +47,7 @@ class UserOnline
         if ($user->getBanned()) {
             return 1;
         }
-        if ( $this->em->getRepository(UserOnlineEntity::class)
+        if ($this->em->getRepository(UserOnlineEntity::class)
             ->findOneBy([
                 'userId' => $user->getId()
             ])

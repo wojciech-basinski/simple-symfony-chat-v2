@@ -1,15 +1,18 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Repository;
+
+use Doctrine\ORM\EntityRepository;
 
 /**
  * UserOnlineRepository
  *
  */
-class UserOnlineRepository extends \Doctrine\ORM\EntityRepository
+class UserOnlineRepository extends EntityRepository
 {
     /**
-     * Delete users online from database, except User, if date in database is older than (now - inactive time from config)
+     * Delete users online from database, except User,
+     * if date in database is older than (now - inactive time from config)
      *
      * @param \DateTime $date date when user must be kicked from chat
      * @param int $id User's id
@@ -48,5 +51,4 @@ class UserOnlineRepository extends \Doctrine\ORM\EntityRepository
                 ->getQuery()
                 ->getResult();
     }
-
 }

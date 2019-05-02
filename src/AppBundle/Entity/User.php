@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace AppBundle\Entity;
 
@@ -57,11 +57,6 @@ class User extends BaseUser
         $this->userMessage = new ArrayCollection();
     }
 
-    /**
-     * @param int $id
-     * Changing id available only if integrating with forum.
-     * Otherwise use autoincrementing
-     */
     public function setId(int $id)
     {
         if (ChatConfig::getPhpBB() || ChatConfig::getMyBB()) {
@@ -72,10 +67,12 @@ class User extends BaseUser
     /**
      * @return string User's role change to text (used as css class)
      */
-    public function getChatRoleAsText()
+    public function getChatRoleAsText(): string
     {
         $role = $this->getRoles();
-        if ($this->getUsername() == 'demotywatorking') return 'demotywatorking';
+        if ($this->getUsername() === 'demotywatorking') {
+            return 'demotywatorking';
+        }
         switch ($role[0]) {
             case 'ROLE_ADMIN':
                 return 'administrator';
@@ -87,12 +84,11 @@ class User extends BaseUser
                 return 'shiny-hunter';
             case 'ROLE_ELDERS':
                 return 'elder';
-            case 'ROLE_FRIEND' :
+            case 'ROLE_FRIEND':
                 return 'friend';
             default:
                 return 'user';
         }
-
     }
 
     /**
@@ -102,7 +98,7 @@ class User extends BaseUser
      *
      * @return $this
      */
-    public function changeRole($role)
+    public function changeRole($role): User
     {
         switch ($role) {
             case 'user':
@@ -124,56 +120,34 @@ class User extends BaseUser
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAvatar(): string
     {
         return $this->avatar;
     }
 
-    /**
-     * @param string $avatar
-     *
-     * @return User
-     */
     public function setAvatar(string $avatar): User
     {
         $this->avatar = $avatar;
         return $this;
     }
 
-    /**
-     * @param \DateTime|null $banned
-     * @return User
-     */
     public function setBanned(?\DateTime $banned): User
     {
         $this->banned = $banned;
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getBanned(): ?\DateTime
     {
         return $this->banned;
     }
 
-    /**
-     * @param null|string $banReason
-     * @return User
-     */
     public function setBanReason(?string $banReason): User
     {
         $this->banReason = $banReason;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getBanReason(): ?string
     {
         return $this->banReason;
