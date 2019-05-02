@@ -403,3 +403,7 @@ blockquote {
 mark {
     background: #7F7C6A;
 }
+
+.modal-title, #modal-text{
+    color: black;
+}
