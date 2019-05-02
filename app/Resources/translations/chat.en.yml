@@ -61,3 +61,4 @@ error:
     cantUnbanYourself: You cannot unban yourself
     notPermittedToListBan: You do not have permission to see bans' list
     cantBanAdmin: You cannot ban administator
+    errorOccured: An error occured

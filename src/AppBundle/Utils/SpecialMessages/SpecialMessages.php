@@ -137,7 +137,7 @@ class SpecialMessages
                 $this->locale
             ) . ' ';
         for ($i = 0; $i < $dice[0]; $i++) {
-            $result = $this->rollDice($dice[1]);
+            $result = $this->rollDice((int) $dice[1]);
             $textSpecial .= $result . ', ';
             $text .= $result . ', ';
         }
