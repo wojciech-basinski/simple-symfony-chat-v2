@@ -215,7 +215,6 @@ $(document).ready(function () {
             if (json.status === "false") {
                 $('#modal-text').text(json.errorMessage);
                 $('#modal-error').modal();
-                // $('#messages-box').append('<div class="message-error">' + json.errorMessage + '</div>');
             } else {
                 insertSentMessage(json);
                 playSound(sendMessageSound);
