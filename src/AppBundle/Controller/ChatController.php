@@ -53,7 +53,7 @@ class ChatController extends Controller
             $session->set('channel', 1);
         }
 
-        if ($userOnline->updateUserOnline($user, $channel, 0)) {
+        if ($userOnline->updateUserOnline($user, $channel, false)) {
             return $this->redirectToRoute('banned');
         }
         $response = new Response();
@@ -129,7 +129,7 @@ class ChatController extends Controller
         $typing = in_array($typing, [0, 1]) ? $typing : 0;
 
         $changeChannel = 0;
-        if ($userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), $typing)) {
+        if ($userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), (bool) $typing)) {
             return new JsonResponse(['banned']);
         }
 
@@ -220,7 +220,7 @@ class ChatController extends Controller
         if (!$channel) {
             return $this->json('false');
         }
-        $return = $channelService->changeChannelOnChat($this->getUser(), $channel);
+        $return = $channelService->changeChannelOnChat($this->getUser(), (int) $channel);
 
         return $this->json($return);
     }

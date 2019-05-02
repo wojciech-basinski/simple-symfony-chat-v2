@@ -2834,23 +2834,9 @@
                     <div class="text-in-info language {{ locale == 'en' ? 'active' }}" data-value="en">EN</div>
                     <div class="text-bold info-text">{{ 'channels'|trans }}:</div>
                     <div id="channels"></div>
-                    {#{% for key,value in channels %}#}
-                    {#<div class="text-in-info channel {{ (key == user_channel) ? 'active' }}"#}
-                    {#data-value="{{ key }}">#}
-                    {#{% if ('channel.' ~ value)|trans != ('channel.' ~ value) %}#}
-                    {#{{ ('channel.' ~ value)|trans }}#}
-                    {#{% else %}#}
-                    {#{{ value }}#}
-                    {#{% endif %}#}
-                    {#</div>#}
-                    {#{% endfor %}#}
                     <div class="text-bold info-text">{{ 'online'|trans }}:</div>
                     <div class="{{ user.getChatRoleAsText }} text-in-info" id="username">{{ user.username }}</div>
                     <div id="users-box">
-                        {#{% for user in usersOnline %}#}
-                        {#<div class="{{ user.user_role }} text-in-info online-user pointer"#}
-                        {#data-value="{{ user.username }}">{{ user.username }}</div>#}
-                        {#{% endfor %}#}
                     </div>
                     <div class="logout">
                         {% if is_granted('ROLE_ADMIN') %}
