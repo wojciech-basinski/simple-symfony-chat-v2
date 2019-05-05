@@ -2806,22 +2806,6 @@
             <div class="panel panel-success" id="panel-messages">
                 <div class="panel-body panel-messages no-padding">
                     <div id="messages-box">
-                        {#{% for message in messages|sort %}#}
-                        {#<div class="message {{ ("@" ~ user.username in message.text) ? 'light' }}#}
-                        {#{{ message.privateMessage ? 'private-message' }}">#}
-                        {#<span class="date">({{ message.date|date('H:i:s') }})</span>#}
-                        {#{% if message.username != user.username %}#}
-                        {#<span class="icon-mail pointer" data-value="{{ message.username }}"></span>#}
-                        {#{% endif %}#}
-                        {#<span class="{{ message.user_role }} text-bold nick pointer">{{ message.username }}</span>:#}
-                        {#<span class="message-text">#}
-                        {#{{ message.text|raw }}#}
-                        {#</span>#}
-                        {#{% if is_granted('ROLE_MODERATOR') %}#}
-                        {#<span class="pull-right kursor" data-id="{{ message.id }}">&times;</span>#}
-                        {#{% endif %}#}
-                        {#</div>#}
-                        {#{% endfor %}#}
                     </div>
                 </div>
             </div>
@@ -2829,14 +2813,19 @@
         <div class="col-xs-5 col-md-2" id="online-users">
             <div class="panel panel-success panel-no-padding" id="panel-users">
                 <div class="panel-body no-padding">
-                    <div class="text-bold info-text">{{ 'lang'|trans }}:</div>
-                    <div class="text-in-info language {{ locale == 'pl' ? 'active' }}" data-value="pl">PL</div>
-                    <div class="text-in-info language {{ locale == 'en' ? 'active' }}" data-value="en">EN</div>
-                    <div class="text-bold info-text">{{ 'channels'|trans }}:</div>
-                    <div id="channels"></div>
-                    <div class="text-bold info-text">{{ 'online'|trans }}:</div>
-                    <div class="{{ user.getChatRoleAsText }} text-in-info" id="username">{{ user.username }}</div>
-                    <div id="users-box">
+                    <div class="text-bold info-text" role="button" data-toggle="collapse"
+                         href="#collapseLanguage" aria-expanded="true">{{ 'lang'|trans }}:</div>
+                    <div id="collapseLanguage" class="collapse">
+                        <div class="text-in-info language {{ locale == 'pl' ? 'active' }}" data-value="pl">PL</div>
+                        <div class="text-in-info language {{ locale == 'en' ? 'active' }}" data-value="en">EN</div>
+                    </div>
+                    <div class="text-bold info-text" role="button" data-toggle="collapse"
+                         href="#channels" aria-expanded="true">{{ 'channels'|trans }}:</div>
+                    <div id="channels" class="collapse in"></div>
+                    <div class="text-bold info-text" role="button" data-toggle="collapse"
+                         href="#users-box" aria-expanded="true">{{ 'online'|trans }}:</div>
+                    <div id="users-box" class="collapse in">
+                        <div class="{{ user.getChatRoleAsText }} text-in-info" id="username">{{ user.username }}</div>
                     </div>
                     <div class="logout">
                         {% if is_granted('ROLE_ADMIN') %}
