@@ -1,12 +1,11 @@
 <?php declare(strict_types = 1);
 
-namespace AppBundle\Utils\Messages\SpecialMessages\Roll;
+namespace AppBundle\Utils\Messages\SpecialMessages\Display;
 
 use AppBundle\Utils\ChatConfig;
-use AppBundle\Utils\Messages\SpecialMessages\SpecialMessageDisplay;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class RollDisplay implements SpecialMessageDisplay
+class RollMessageDisplay implements SpecialMessageDisplay
 {
     /**
      * @var TranslatorInterface

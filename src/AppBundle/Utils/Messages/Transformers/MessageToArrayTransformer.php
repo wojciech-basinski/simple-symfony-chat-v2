@@ -15,6 +15,7 @@ class MessageToArrayTransformer
     {
         $this->specialMessageDisplayTransformer = $specialMessageDisplayTransformer;
     }
+
     /**
      * Changing mesages from entity to array
      *

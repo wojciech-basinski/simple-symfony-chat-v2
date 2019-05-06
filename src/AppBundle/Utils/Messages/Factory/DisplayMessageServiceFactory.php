@@ -2,19 +2,62 @@
 
 namespace AppBundle\Utils\Messages\Factory;
 
-use AppBundle\Utils\Messages\SpecialMessages\Roll\RollDisplay;
-use AppBundle\Utils\Messages\SpecialMessages\SpecialMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\AfkMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\InviteMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\ReceivedPrivateMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\ReturnFromAfkDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\SentPrivateMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\RollMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\SpecialMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\UninviteMessageDisplay;
 
 class DisplayMessageServiceFactory
 {
     /**
-     * @var RollDisplay
+     * @var RollMessageDisplay
      */
     private $rollDisplay;
+    /**
+     * @var SentPrivateMessageDisplay
+     */
+    private $sentPrivateMessageDisplay;
+    /**
+     * @var ReceivedPrivateMessageDisplay
+     */
+    private $receivedPrivateMessageDisplay;
+    /**
+     * @var InviteMessageDisplay
+     */
+    private $inviteMessageDisplay;
+    /**
+     * @var UninviteMessageDisplay
+     */
+    private $uninviteMessageDisplay;
+    /**
+     * @var AfkMessageDisplay
+     */
+    private $afkMessageDisplay;
+    /**
+     * @var ReturnFromAfkDisplay
+     */
+    private $returnFromAfkDisplay;
 
-    public function __construct(RollDisplay $rollDisplay)
-    {
+    public function __construct(
+        RollMessageDisplay $rollDisplay,
+        SentPrivateMessageDisplay $sentPrivateMessageDisplay,
+        ReceivedPrivateMessageDisplay $receivedPrivateMessageDisplay,
+        InviteMessageDisplay $inviteMessageDisplay,
+        UninviteMessageDisplay $uninviteMessageDisplay,
+        AfkMessageDisplay $afkMessageDisplay,
+        ReturnFromAfkDisplay $returnFromAfkDisplay
+    ) {
         $this->rollDisplay = $rollDisplay;
+        $this->sentPrivateMessageDisplay = $sentPrivateMessageDisplay;
+        $this->receivedPrivateMessageDisplay = $receivedPrivateMessageDisplay;
+        $this->inviteMessageDisplay = $inviteMessageDisplay;
+        $this->uninviteMessageDisplay = $uninviteMessageDisplay;
+        $this->afkMessageDisplay = $afkMessageDisplay;
+        $this->returnFromAfkDisplay = $returnFromAfkDisplay;
     }
 
     public function getDisplayService(string $text): ?SpecialMessageDisplay
@@ -24,18 +67,18 @@ class DisplayMessageServiceFactory
         switch ($textSplitted[0]) {
             case '/roll':
                 return $this->rollDisplay;
-//            case '/privTo':
-//                return $this->privToShow($textSplitted);
-//            case '/privMsg':
-//                return $this->privFromShow($textSplitted);
-//            case '/invite':
-//                return $this->inviteToShow($textSplitted);
-//            case '/uninvite':
-//                return $this->uninviteToShow($textSplitted);
-//            case '/afk':
-//                return $this->afkToShow($textSplitted);
-//            case '/returnAfk':
-//                return $this->returnAfkToShow($textSplitted);
+            case '/privTo':
+                return $this->sentPrivateMessageDisplay;
+            case '/privMsg':
+                return $this->receivedPrivateMessageDisplay;
+            case '/invite':
+                return $this->inviteMessageDisplay;
+            case '/uninvite':
+                return $this->uninviteMessageDisplay;
+            case '/afk':
+                return $this->afkMessageDisplay;
+            case '/returnAfk':
+                return $this->returnFromAfkDisplay;
             default:
                 return null;
         }

@@ -186,34 +186,6 @@ class SpecialMessages
         return $message1;
     }
 
-    private function privToShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1], 2);
-        $text = $this->translator->trans(
-            'chat.privTo',
-            ['chat.user' => $textSplitted[0]],
-            'chat',
-            $this->locale
-        )
-        . ' ' . $textSplitted[1];
-
-        return [
-            'showText' => $text,
-            'userId' => false
-        ];
-    }
-
-    private function privFromShow(array $text): array
-    {
-        $text = $this->translator->trans('chat.privFrom', [], 'chat', $this->locale) . ' ' . $text[1];
-
-        return [
-            'showText' => $text,
-            'userId' => false,
-            'privateMessage' => 1
-        ];
-    }
-
     private function invite(array $textSplitted, User $user): array
     {
         if (count($textSplitted) < 2) {
@@ -347,43 +319,6 @@ class SpecialMessages
             ->setText($text)
             ->setIp($this->request->server->get('REMOTE_ADDR'));
         $this->em->persist($message);
-    }
-
-    private function inviteToShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1]);
-        $text = $this->translator->trans(
-            'chat.inviteToChannel',
-            [
-                'chat.user' => $textSplitted[0],
-                'chat.channel' => $textSplitted[1]
-            ],
-            'chat',
-            $this->locale
-        );
-
-        return [
-            'showText' => $text,
-            'userId' => ChatConfig::getBotId()
-        ];
-    }
-
-    private function uninviteToShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1]);
-        $text = $this->translator->trans(
-            'chat.uninviteToChannel',
-            [
-                'chat.channel' => $textSplitted[1]
-            ],
-            'chat',
-            $this->locale
-        );
-
-        return [
-            'showText' => $text,
-            'userId' => ChatConfig::getBotId()
-        ];
     }
 
     private function banUser(array $textSplitted, User $user): array
