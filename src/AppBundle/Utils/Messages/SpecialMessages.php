@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace AppBundle\Utils\SpecialMessages;
+namespace AppBundle\Utils\Messages;
 
 use AppBundle\Entity\Invite;
 use AppBundle\Entity\Message;
@@ -61,30 +61,6 @@ class SpecialMessages
         $this->session = $session;
         $this->auth = $auth;
         $this->request = $request->getCurrentRequest();
-    }
-
-    public function specialMessagesDisplay(string $text): array
-    {
-        $textSplitted = explode(' ', $text, 2);
-
-        switch ($textSplitted[0]) {
-            case '/roll':
-                return $this->rollShow($textSplitted);
-            case '/privTo':
-                return $this->privToShow($textSplitted);
-            case '/privMsg':
-                return $this->privFromShow($textSplitted);
-            case '/invite':
-                return $this->inviteToShow($textSplitted);
-            case '/uninvite':
-                return $this->uninviteToShow($textSplitted);
-            case '/afk':
-                return $this->afkToShow($textSplitted);
-            case '/returnAfk':
-                return $this->returnAfkToShow($textSplitted);
-            default:
-                return ['userId' => false];
-        }
     }
 
     public function specialMessages(string $text, User $user): array
@@ -158,23 +134,6 @@ class SpecialMessages
     private function rollDice(int $max): int
     {
         return random_int(1, $max);
-    }
-
-    private function rollShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1], 3);
-        $text = $textSplitted[1] . ' ' .
-            $this->translator->trans(
-                'chat.roll',
-                ['chat.dice' => $textSplitted[0]],
-                'chat',
-                $this->locale
-            ) . ' ' . $textSplitted[2];
-
-        return [
-            'showText' => $text,
-            'userId' => ChatConfig::getBotId()
-        ];
     }
 
     private function priv(array $text, User $user): array
@@ -668,6 +627,7 @@ class SpecialMessages
 
         $this->em->persist($message);
         $this->em->flush();
+        $this->session->set('afkMessage', $message);
 
         return ['userId' => ChatConfig::getBotId(), 'message' => $message, 'text' => $text, 'count' => 1];
     }

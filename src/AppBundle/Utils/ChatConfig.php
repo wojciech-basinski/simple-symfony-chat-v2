@@ -115,7 +115,7 @@ class ChatConfig
             $this->getChannelsFromInvitations($user);
     }
 
-    public static function getBotId(): int
+    public function getBotId(): int
     {
         return self::BOT_ID;
     }

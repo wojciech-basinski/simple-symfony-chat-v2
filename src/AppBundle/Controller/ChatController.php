@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Utils\Channel;
 use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\Message;
+use AppBundle\Utils\Messages\MessageGetter;
 use AppBundle\Utils\UserOnline;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -62,7 +63,7 @@ class ChatController extends Controller
             'user_channel' => $channel,
             'channels' => $config->getChannels($user),
             'locale' => $request->getLocale(),
-            'botId' => ChatConfig::getBotId(),
+            'botId' => $config->getBotId(),
             'channel' => $channel,
             'privateChannelId' => $config->getUserPrivateMessageChannelId($user)
         ]);
@@ -102,28 +103,28 @@ class ChatController extends Controller
      * Get new messages from last refresh and get users online
      *
      * @param Request $request
-     * @param Message $messageService
      * @param UserOnline $userOnlineService
      * @param Channel $channel
      * @param SessionInterface $session
      * @param ChatConfig $config
      * @param Translator $translator
+     * @param MessageGetter $messageGetter
      *
      * @return JsonResponse returns messages and users online
      */
     public function refreshAction(
         Request $request,
-        Message $messageService,
         UserOnline $userOnlineService,
         Channel $channel,
         SessionInterface $session,
         ChatConfig $config,
-        Translator $translator
+        Translator $translator,
+        MessageGetter $messageGetter
     ): Response {
-        if ($request->request->get('chatIndex')) {
-            $messages = $messageService->getMessagesInIndex($this->getUser());
+        if ($request->request->get('chatIndex', null)) {
+            $messages = $messageGetter->getMessagesInIndex($this->getUser());
         } else {
-            $messages = $messageService->getMessagesFromLastId($this->getUser());
+            $messages = $messageGetter->getMessagesFromLastId($this->getUser());
         }
         $typing = $request->request->get('typing');
         $typing = in_array($typing, [0, 1]) ? $typing : 0;
