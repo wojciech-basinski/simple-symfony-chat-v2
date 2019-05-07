@@ -106,11 +106,10 @@ class MessageGetter
     public function getMessagesFromLastId(User $user): array
     {
         $lastId = $this->session->get('lastId');
-        $channel = $this->session->get('channel');
         //only when channel was changed
         if ($this->session->get('changedChannel', null)) {
             $this->session->remove('changedChannel');
-            return $this->getMessagesAfterChangingChannel($channel, $user);
+            return $this->getMessagesAfterChangingChannel($user);
         }
 
         $messages = $this->em->getRepository('AppBundle:Message')
@@ -127,10 +126,29 @@ class MessageGetter
         $messages = $this->messageTransformer->transformMessagesToArray($messages);
 
         $messagesToDisplay = $this->messageDisplayValidator->checkIfMessagesCanBeDisplayed($messages, $user);
-        usort($messagesToDisplay, function ($a, $b) {
+        usort($messagesToDisplay, static function ($a, $b) {
             return $a <=> $b;
         });
 
         return $messagesToDisplay;
+    }
+
+    /**
+     * Gets messages from last 24h from new channel, then set id of last message to session if any message exists,
+     * than change messages from entitys to array and checking if messages can be displayed
+     *
+     * @param int $channel Channel's Id
+     * @param User $user Current user
+     *
+     * @return array Array of messages changed to array
+     */
+    private function getMessagesAfterChangingChannel(User $user): array
+    {
+        $messages = $this->getMessagesInIndex($user);
+        usort($messages, static function ($a, $b) {
+            return $a <=> $b;
+        });
+
+        return $messages;
     }
 }

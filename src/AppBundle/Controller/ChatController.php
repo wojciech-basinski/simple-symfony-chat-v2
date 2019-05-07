@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Utils\Channel;
 use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\Message;
+use AppBundle\Utils\Messages\DeleteMessage;
 use AppBundle\Utils\Messages\MessageGetter;
 use AppBundle\Utils\UserOnline;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -121,6 +122,7 @@ class ChatController extends Controller
         Translator $translator,
         MessageGetter $messageGetter
     ): Response {
+        //@todo refactor that shit fat method in controller
         if ($request->request->get('chatIndex', null)) {
             $messages = $messageGetter->getMessagesInIndex($this->getUser());
         } else {
@@ -169,11 +171,12 @@ class ChatController extends Controller
      * add message to database that message was deleted and by whom
      *
      * @param Request $request A Request instance
-     * @param Message $message
+     * @param DeleteMessage $message
      *
      * @return JsonResponse status true or false
+     * @throws \Exception
      */
-    public function deleteAction(Request $request, Message $message): Response
+    public function deleteAction(Request $request, DeleteMessage $message): Response
     {
         $id = $request->get('messageId');
         $user = $this->getUser();
@@ -181,7 +184,7 @@ class ChatController extends Controller
             return $this->json(['status' => 0]);
         }
 
-        $status = $message->deleteMessage($id, $user);
+        $status = $message->deleteMessage((int) $id, $user);
 
         return $this->json(['status' => $status]);
     }

@@ -89,7 +89,7 @@ class ChatConfig
     /**
      * @var null|array
      */
-    private $invitations = null;
+    private $invitations;
 
 
     public function __construct(

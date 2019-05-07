@@ -40,10 +40,6 @@ class Message
      */
     private $logger;
     /**
-     * @var Channel
-     */
-    private $channel;
-    /**
      * @var Request
      */
     private $request;
@@ -54,7 +50,6 @@ class Message
         ChatConfig $config,
         SpecialMessages $special,
         LoggerInterface $logger,
-        Channel $channel,
         RequestStack $request
     ) {
         $this->em = $em;
@@ -62,38 +57,7 @@ class Message
         $this->config = $config;
         $this->specialMessages = $special;
         $this->logger = $logger;
-        $this->channel = $channel;
         $this->request = $request->getCurrentRequest();
-    }
-
-    /**
-     * Gets messages from last 24h from new channel, then set id of last message to session if any message exists,
-     * than change messages from entitys to array and checking if messages can be displayed
-     *
-     * @param int $channel Channel's Id
-     * @param User $user Current user
-     *
-     * @return array Array of messages changed to array
-     */
-    private function getMessagesAfterChangingChannel(int $channel, User $user): array
-    {
-        $messages = $this->em->getRepository('AppBundle:Message')
-            ->getMessagesFromLastDay(
-                $channel,
-                $this->config->getUserPrivateMessageChannelId($user)
-            );
-
-        $lastId = $this->em->getRepository('AppBundle:Message')
-            ->getIdFromLastMessage();
-        $this->session->set('lastId', $lastId);
-
-        $this->changeMessagesToArray($messages);
-        $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
-        usort($messagesToDisplay, static function ($a, $b) {
-            return $a <=> $b;
-        });
-
-        return $messagesToDisplay;
     }
 
     /**
@@ -188,36 +152,6 @@ class Message
             'status' => 'true',
             'messages' => $messagesToDisplay ?? ''
         ];
-    }
-
-    /**
-     * Deleting message from database
-     *
-     * @param int $id Message's id
-     *
-     * @param User $user User instance
-     *
-     * @return int status of deleting messages
-     */
-    public function deleteMessage(int $id, User $user): int
-    {
-        $channel = $this->session->get('channel');
-        $message = $this->em->getRepository(MessageEntity::class)->find($id);
-
-        $this->em->remove($message);
-        $this->em->flush();
-        
-        $message = new MessageEntity();
-            $message->setUserInfo($user)
-            ->setChannel($channel)
-            ->setText('/delete ' . $id)
-            ->setDate(new \DateTime())
-            ->setIp($this->request->server->get('REMOTE_ADDR'));
-
-        $this->em->persist($message);
-        $this->em->flush();
-
-        return 1;
     }
 
     /**
