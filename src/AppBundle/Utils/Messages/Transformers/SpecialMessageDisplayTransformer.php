@@ -22,6 +22,12 @@ class SpecialMessageDisplayTransformer
         if ($displayService === null) {
             return ['userId' => false];
         }
-        return $this->messageServiceFactory->getDisplayService($text)->display($text);
+        return $this->messageServiceFactory->getDisplayService($text)
+            ->display($this->explodeText($text));
+    }
+
+    private function explodeText(string $text): array
+    {
+        return explode(' ', $text, 2);
     }
 }

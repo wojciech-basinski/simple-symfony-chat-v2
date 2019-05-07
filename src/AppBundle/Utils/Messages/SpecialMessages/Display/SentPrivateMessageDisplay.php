@@ -19,10 +19,9 @@ class SentPrivateMessageDisplay implements SpecialMessageDisplay
     /**
      * Display special message
      */
-    public function display(string $text): array
+    public function display(array $textSplitted): array
     {
-        $text = explode(' ', $text, 2);
-        $textSplitted = explode(' ', $text[1], 2);
+        $textSplitted = explode(' ', $textSplitted[1], 2);
         $text = $this->translator->trans(
                 'chat.privTo',
                 ['chat.user' => $textSplitted[0]],

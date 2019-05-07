@@ -25,10 +25,9 @@ class UninviteMessageDisplay implements SpecialMessageDisplay
     /**
      * Display special message
      */
-    public function display(string $text): array
+    public function display(array $textSplitted): array
     {
-        $text = explode(' ', $text, 2);
-        $textSplitted = explode(' ', $text[1]);
+        $textSplitted = explode(' ', $textSplitted[1]);
         $text = $this->translator->trans(
             'chat.uninviteToChannel',
             [

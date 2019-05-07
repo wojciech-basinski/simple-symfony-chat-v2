@@ -22,10 +22,9 @@ class RollMessageDisplay implements SpecialMessageDisplay
         $this->config = $config;
     }
 
-    public function display(string $text): array
+    public function display(array $textSplitted): array
     {
-        $text = explode(' ', $text, 2);
-        $textSplitted = explode(' ', $text[1], 3);
+        $textSplitted = explode(' ', $textSplitted[1], 3);
         $text = $textSplitted[1] . ' ' .
             $this->translator->trans(
                 'chat.roll',

@@ -7,5 +7,5 @@ interface SpecialMessageDisplay
     /**
      * Display special message
      */
-    public function display(string $text): array;
+    public function display(array $text): array;
 }

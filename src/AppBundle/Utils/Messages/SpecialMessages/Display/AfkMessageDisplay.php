@@ -25,12 +25,11 @@ class AfkMessageDisplay implements SpecialMessageDisplay
     /**
      * Display special message
      */
-    public function display(string $text): array
+    public function display(array $textSplitted): array
     {
-        $text = explode(' ', $text, 2);
         $text = $this->translator->trans(
             'chat.afk',
-            ['chat.user' => $text[1]],
+            ['chat.user' => $textSplitted[1]],
             'chat',
             $this->translator->getLocale()
         );
