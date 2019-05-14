@@ -148,7 +148,7 @@ html, body {
     background: chartreuse;
 }
 
-.administrator, .demotywatorking {
+.administrator {
     color: red;
 }
 
@@ -164,7 +164,7 @@ html, body {
     color: #00FF40;
 }
 
-.friend {
+.friend, .demotywatorking {
     color: #FF8000;
 }
 
