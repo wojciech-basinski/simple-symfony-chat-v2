@@ -95,7 +95,6 @@ class SpecialMessages
 
     private function roll(array $text, User $user): array
     {
-        //todo przepisać na metodę
         if ($this->config->getRollCoolDown()) {
             $fail = $this->checkRollCoolDown();
             if ($fail) {

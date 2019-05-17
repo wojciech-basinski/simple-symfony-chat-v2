@@ -4,6 +4,8 @@ namespace AppBundle\Utils;
 
 use AppBundle\Entity\User;
 use AppBundle\Utils\Messages\SpecialMessages;
+use AppBundle\Utils\Messages\Transformers\MessageToArrayTransformer;
+use AppBundle\Utils\Messages\Validator\MessageDisplayValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,6 +45,14 @@ class Message
      * @var Request
      */
     private $request;
+    /**
+     * @var MessageToArrayTransformer
+     */
+    private $messageToArrayTransformer;
+    /**
+     * @var MessageDisplayValidator
+     */
+    private $messageDisplayValidator;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -50,7 +60,9 @@ class Message
         ChatConfig $config,
         SpecialMessages $special,
         LoggerInterface $logger,
-        RequestStack $request
+        RequestStack $request,
+        MessageToArrayTransformer $messageToArrayTransformer,
+        MessageDisplayValidator $messageDisplayValidator
     ) {
         $this->em = $em;
         $this->session = $session;
@@ -58,6 +70,8 @@ class Message
         $this->specialMessages = $special;
         $this->logger = $logger;
         $this->request = $request->getCurrentRequest();
+        $this->messageToArrayTransformer = $messageToArrayTransformer;
+        $this->messageDisplayValidator = $messageDisplayValidator;
     }
 
     /**
@@ -77,8 +91,11 @@ class Message
         }
 
         $special = $this->specialMessages->specialMessages($text, $user);
-
-        if ($this->session->get('afk') === true && $special === ['userId' => false]) {
+        $fail = $special['fail'] ?? null;
+        if ($fail) {
+            return $this->returnFail();
+        }
+        if ($special === ['userId' => false] && $this->session->get('afk') === true) {
             $this->specialMessages->specialMessages('/afk', $user);
             $special['count'] = 1;
         }
@@ -129,7 +146,7 @@ class Message
                     $this->config->getUserPrivateMessageChannelId($user)
                 );
             if ($messages) {
-                $this->changeMessagesToArray($messages);
+                $this->messageToArrayTransformer->transformMessagesToArray($messages);
                 foreach ($messages as &$message) {
                     if (isset($special['message'])) {
                         if ($message['id'] === $special['message']->getId()) {
@@ -137,7 +154,7 @@ class Message
                         }
                     }
                 }
-                $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
+                $messagesToDisplay = $this->messageDisplayValidator->checkIfMessagesCanBeDisplayed($messages, $user);
                 $id = end($messagesToDisplay)['id'];
             }
         }
@@ -148,7 +165,7 @@ class Message
             'id' => $id,
             'userName' => $special['userId'] ? 'BOT' : $user->getUsername(),
             'text' => $special['showText'] ?? $text,
-            'avatar' => $special['userId'] ? 'https://phs-phsa.ml/bot_avatar.jpg' : $user->getAvatar(),
+            'avatar' => $special['userId'] ? 'https://phs-phsa.ga/bot_avatar.jpg' : $user->getAvatar(),
             'status' => 'true',
             'messages' => $messagesToDisplay ?? ''
         ];

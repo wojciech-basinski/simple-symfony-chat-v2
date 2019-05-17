@@ -30,7 +30,7 @@ class MessageDisplayValidator
         $count = count($messages);
         for ($i = 0; $i < $count; $i++) {
             $textSplitted = explode(' ', $messages[$i]['text']);
-            if ($textSplitted[0] == '/delete') {
+            if ($textSplitted[0] === '/delete') {
                 unset($messages[$i]);
             }
             if (!$this->channel->checkIfUserCanBeOnThatChannel($user, $messages[$i]['channel'])) {
