@@ -3,7 +3,9 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\User;
-use AppBundle\Utils\SpecialMessages\SpecialMessages;
+use AppBundle\Utils\Messages\SpecialMessages;
+use AppBundle\Utils\Messages\Transformers\MessageToArrayTransformer;
+use AppBundle\Utils\Messages\Validator\MessageDisplayValidator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,13 +42,17 @@ class Message
      */
     private $logger;
     /**
-     * @var Channel
-     */
-    private $channel;
-    /**
      * @var Request
      */
     private $request;
+    /**
+     * @var MessageToArrayTransformer
+     */
+    private $messageToArrayTransformer;
+    /**
+     * @var MessageDisplayValidator
+     */
+    private $messageDisplayValidator;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -54,123 +60,28 @@ class Message
         ChatConfig $config,
         SpecialMessages $special,
         LoggerInterface $logger,
-        Channel $channel,
-        RequestStack $request
+        RequestStack $request,
+        MessageToArrayTransformer $messageToArrayTransformer,
+        MessageDisplayValidator $messageDisplayValidator
     ) {
         $this->em = $em;
         $this->session = $session;
         $this->config = $config;
         $this->specialMessages = $special;
         $this->logger = $logger;
-        $this->channel = $channel;
         $this->request = $request->getCurrentRequest();
-    }
-
-    /**
-     * Gets messages from last 24h limited by chat limit, than set id of last message to session
-     * than change messages from entitys to array
-     *
-     * @param User $user
-     *
-     * @return array Array of messages changed to array
-     */
-    public function getMessagesInIndex(User $user): array
-    {
-        $channel = $this->session->get('channel');
-        $channelPrivateMessage = $this->config->getUserPrivateMessageChannelId($user);
-
-        $messages = $this->em->getRepository('AppBundle:Message')
-            ->getMessagesFromLastDay($channel, $channelPrivateMessage);
-
-        $this->session->set(
-            'lastId',
-            $this->em->getRepository('AppBundle:Message')
-                ->getIdFromLastMessage()
-        );
-
-        $this->changeMessagesToArray($messages);
-
-        return $this->checkIfMessagesCanBeDisplayed($messages, $user);
-    }
-
-    /**
-     * Gets messages from database from last id read from session, then set id of last message to session if any message exists,
-     * than change messages from entitys to array and checking if messages can be displayed
-     *
-     * @param User $user
-     *
-     * @return array Array of messages changed to array
-     */
-    public function getMessagesFromLastId(User $user): array
-    {
-        $lastId = $this->session->get('lastId');
-        $channel = $this->session->get('channel');
-        //only when channel was changed
-        if ($this->session->get('changedChannel', null)) {
-            $this->session->remove('changedChannel');
-            return $this->getMessagesAfterChangingChannel($channel, $user);
-        }
-
-        $messages = $this->em->getRepository('AppBundle:Message')
-            ->getMessagesFromLastId(
-                $lastId,
-                $this->config->getPrivateMessageAdd(),
-                $this->config->getUserPrivateMessageChannelId($user)
-            );
-
-        //if get new messages, update var lastId in session
-        if (end($messages)) {
-            $this->session->set('lastId', end($messages)->getId());
-        }
-        $this->changeMessagesToArray($messages);
-
-        $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
-        usort($messagesToDisplay, static function ($a, $b) {
-            return $a <=> $b;
-        });
-
-        return $messagesToDisplay;
-    }
-
-    /**
-     * Gets messages from last 24h from new channel, then set id of last message to session if any message exists,
-     * than change messages from entitys to array and checking if messages can be displayed
-     *
-     * @param int $channel Channel's Id
-     * @param User $user Current user
-     *
-     * @return array Array of messages changed to array
-     */
-    private function getMessagesAfterChangingChannel(int $channel, User $user): array
-    {
-        $messages = $this->em->getRepository('AppBundle:Message')
-            ->getMessagesFromLastDay(
-                $channel,
-                $this->config->getUserPrivateMessageChannelId($user)
-            );
-
-        $lastId = $this->em->getRepository('AppBundle:Message')
-            ->getIdFromLastMessage();
-        $this->session->set('lastId', $lastId);
-
-        $this->changeMessagesToArray($messages);
-        $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
-        usort($messagesToDisplay, static function ($a, $b) {
-            return $a <=> $b;
-        });
-
-        return $messagesToDisplay;
+        $this->messageToArrayTransformer = $messageToArrayTransformer;
+        $this->messageDisplayValidator = $messageDisplayValidator;
     }
 
     /**
      * Validates messages and adds message to database, checks if there are new messages from last refresh,
      * save sent message's id to session as lastid
      *
-     * @param User        $user User instance, who is sending message
-     * @param string|null $text Message's text
+     * @param User $user User instance, who is sending message
+     * @param string $text Message's text
      *
      * @return array status of adding messages, and new messages from last refresh
-     * @throws \Exception
      */
     public function addMessageToDatabase(User $user, ?string $text): array
     {
@@ -189,7 +100,7 @@ class Message
             $special['count'] = 1;
         }
 
-        if ($special['userId'] === ChatConfig::getBotId()) {
+        if ($special['userId'] === $this->config->getBotId()) {
             $originalUser = $user;
             $user = $this->em->find('AppBundle:User', ChatConfig::getBotId());
             $text = $special['text'];
@@ -235,7 +146,7 @@ class Message
                     $this->config->getUserPrivateMessageChannelId($user)
                 );
             if ($messages) {
-                $this->changeMessagesToArray($messages);
+                $this->messageToArrayTransformer->transformMessagesToArray($messages);
                 foreach ($messages as &$message) {
                     if (isset($special['message'])) {
                         if ($message['id'] === $special['message']->getId()) {
@@ -243,8 +154,7 @@ class Message
                         }
                     }
                 }
-                unset($message);
-                $messagesToDisplay = $this->checkIfMessagesCanBeDisplayed($messages, $user);
+                $messagesToDisplay = $this->messageDisplayValidator->checkIfMessagesCanBeDisplayed($messages, $user);
                 $id = end($messagesToDisplay)['id'];
             }
         }
@@ -255,65 +165,10 @@ class Message
             'id' => $id,
             'userName' => $special['userId'] ? 'BOT' : $user->getUsername(),
             'text' => $special['showText'] ?? $text,
-            'avatar' => $special['userId'] ? 'https://phs-phsa.ml/bot_avatar.jpg' : $user->getAvatar(),
+            'avatar' => $special['userId'] ? 'https://phs-phsa.ga/bot_avatar.jpg' : $user->getAvatar(),
             'status' => 'true',
             'messages' => $messagesToDisplay ?? ''
         ];
-    }
-
-    /**
-     * Deleting message from database
-     *
-     * @param int $id Message's id
-     *
-     * @param User $user User instance
-     *
-     * @return int status of deleting messages
-     */
-    public function deleteMessage(int $id, User $user): int
-    {
-        $channel = $this->session->get('channel');
-        $message = $this->em->getRepository(MessageEntity::class)->find($id);
-
-        $this->em->remove($message);
-        $this->em->flush();
-        
-        $message = new MessageEntity();
-            $message->setUserInfo($user)
-            ->setChannel($channel)
-            ->setText('/delete ' . $id)
-            ->setDate(new \DateTime())
-            ->setIp($this->request->server->get('REMOTE_ADDR'));
-
-        $this->em->persist($message);
-        $this->em->flush();
-
-        return 1;
-    }
-
-    /**
-     * Checking if message can be displayed on chat, unsetting messages that cannot be displayed
-     *
-     * @param array $messages messages as array
-     *
-     * @param User $user
-     *
-     * @return array checked messages
-     */
-    private function checkIfMessagesCanBeDisplayed(array $messages, User $user): array
-    {
-        $count = count($messages);
-        for ($i = 0; $i < $count; $i++) {
-            $textSplitted = explode(' ', $messages[$i]['text']);
-            if ($textSplitted[0] === '/delete') {
-                unset($messages[$i]);
-            }
-            if (!$this->channel->checkIfUserCanBeOnThatChannel($user, $messages[$i]['channel'])) {
-                unset($messages[$i]);
-            }
-        }
-
-        return $messages;
     }
 
     /**
@@ -355,42 +210,6 @@ class Message
             return false;
         }
         return true;
-    }
-
-    /**
-     * Changing mesages from entity to array
-     *
-     * @param $messages array[Message]|Message Messages to changed
-     */
-    private function changeMessagesToArray(array &$messages): void
-    {
-        foreach ($messages as &$message) {
-            $message = $this->createArrayToJson($message);
-        }
-    }
-
-    private function createArrayToJson(MessageEntity $message): array
-    {
-        $text = $this->specialMessages->specialMessagesDisplay($message->getText());
-
-        $returnedArray = [
-            'id' => $message->getId(),
-            'user_id' => $message->getUserId(),
-            'date' => $message->getDate(),
-            'text' => $text['showText'] ?? $message->getText(),
-            'channel' => $message->getChannel(),
-            'username' => $message->getUsername(),
-            'user_role' => $message->getRole(),
-            'privateMessage' => $text['privateMessage'] ?? 0,
-            'user_avatar' => $message->getUserAvatar()
-        ];
-
-        $textSplitted = explode(' ', $message->getText());
-        if ($textSplitted[0] === '/delete') {
-            $returnedArray['id'] = $textSplitted[1];
-            $returnedArray['text'] = 'delete';
-        }
-        return $returnedArray;
     }
 
     private function nl2br(string $string): string

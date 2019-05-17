@@ -25,12 +25,12 @@ class ChatConfig
     ];
 
     /**
-     * @var bool Login by MyBB forum user
+     * @var int Login by MyBB forum user
      */
     private const MYBB = 0;
 
     /**
-     * @var bool Login by phpBB forum user
+     * @var int Login by phpBB forum user
      */
     private const PHPBB = 1;
 
@@ -81,25 +81,19 @@ class ChatConfig
      * @var EntityManagerInterface
      */
     private $em;
-    /**
-     * @var SessionInterface
-     */
-    private $session;
 
     /**
      * @var null|array
      */
-    private $invitations = null;
+    private $invitations;
 
 
     public function __construct(
         AuthorizationCheckerInterface $auth,
-        EntityManagerInterface $em,
-        SessionInterface $session
+        EntityManagerInterface $em
     ) {
         $this->auth = $auth;
         $this->em = $em;
-        $this->session = $session;
     }
 
     /**
@@ -115,17 +109,17 @@ class ChatConfig
             $this->getChannelsFromInvitations($user);
     }
 
-    public static function getBotId(): int
+    public function getBotId(): int
     {
         return self::BOT_ID;
     }
 
-    public static function getMyBB()
+    public static function getMyBB(): int
     {
         return self::MYBB;
     }
 
-    public static function getPhpBB()
+    public static function getPhpBB(): int
     {
         return self::PHPBB;
     }
@@ -194,7 +188,8 @@ class ChatConfig
 
         $return = [];
         foreach ($invitations as $invitation) {
-            $return[$invitation->getChannelId()] = $this->getChannelName($invitation->getChannelId());
+            $channelId = $invitation->getChannelId();
+            $return[$channelId] = $this->getChannelName($channelId);
         }
         $this->invitations = $return;
         return $return;
@@ -218,7 +213,7 @@ class ChatConfig
 
     private function getUserPrivateChannelName(int $id): string
     {
-        $id = $id - self::PRIVATE_CHANNEL_ADD;
+        $id -= self::PRIVATE_CHANNEL_ADD;
         return $this->em->find('AppBundle:User', $id)->getUsername();
     }
 }

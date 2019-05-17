@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace AppBundle\Utils\SpecialMessages;
+namespace AppBundle\Utils\Messages;
 
 use AppBundle\Entity\Invite;
 use AppBundle\Entity\Message;
@@ -63,30 +63,6 @@ class SpecialMessages
         $this->request = $request->getCurrentRequest();
     }
 
-    public function specialMessagesDisplay(string $text): array
-    {
-        $textSplitted = explode(' ', $text, 2);
-
-        switch ($textSplitted[0]) {
-            case '/roll':
-                return $this->rollShow($textSplitted);
-            case '/privTo':
-                return $this->privToShow($textSplitted);
-            case '/privMsg':
-                return $this->privFromShow($textSplitted);
-            case '/invite':
-                return $this->inviteToShow($textSplitted);
-            case '/uninvite':
-                return $this->uninviteToShow($textSplitted);
-            case '/afk':
-                return $this->afkToShow($textSplitted);
-            case '/returnAfk':
-                return $this->returnAfkToShow($textSplitted);
-            default:
-                return ['userId' => false];
-        }
-    }
-
     public function specialMessages(string $text, User $user): array
     {
         $textSplitted = explode(' ', $text, 2);
@@ -119,7 +95,6 @@ class SpecialMessages
 
     private function roll(array $text, User $user): array
     {
-        //todo przepisać na metodę
         if ($this->config->getRollCoolDown()) {
             $fail = $this->checkRollCoolDown();
             if ($fail) {
@@ -158,23 +133,6 @@ class SpecialMessages
     private function rollDice(int $max): int
     {
         return random_int(1, $max);
-    }
-
-    private function rollShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1], 3);
-        $text = $textSplitted[1] . ' ' .
-            $this->translator->trans(
-                'chat.roll',
-                ['chat.dice' => $textSplitted[0]],
-                'chat',
-                $this->locale
-            ) . ' ' . $textSplitted[2];
-
-        return [
-            'showText' => $text,
-            'userId' => ChatConfig::getBotId()
-        ];
     }
 
     private function priv(array $text, User $user): array
@@ -225,34 +183,6 @@ class SpecialMessages
         $this->em->persist($message1);
 
         return $message1;
-    }
-
-    private function privToShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1], 2);
-        $text = $this->translator->trans(
-            'chat.privTo',
-            ['chat.user' => $textSplitted[0]],
-            'chat',
-            $this->locale
-        )
-        . ' ' . $textSplitted[1];
-
-        return [
-            'showText' => $text,
-            'userId' => false
-        ];
-    }
-
-    private function privFromShow(array $text): array
-    {
-        $text = $this->translator->trans('chat.privFrom', [], 'chat', $this->locale) . ' ' . $text[1];
-
-        return [
-            'showText' => $text,
-            'userId' => false,
-            'privateMessage' => 1
-        ];
     }
 
     private function invite(array $textSplitted, User $user): array
@@ -388,43 +318,6 @@ class SpecialMessages
             ->setText($text)
             ->setIp($this->request->server->get('REMOTE_ADDR'));
         $this->em->persist($message);
-    }
-
-    private function inviteToShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1]);
-        $text = $this->translator->trans(
-            'chat.inviteToChannel',
-            [
-                'chat.user' => $textSplitted[0],
-                'chat.channel' => $textSplitted[1]
-            ],
-            'chat',
-            $this->locale
-        );
-
-        return [
-            'showText' => $text,
-            'userId' => ChatConfig::getBotId()
-        ];
-    }
-
-    private function uninviteToShow(array $text): array
-    {
-        $textSplitted = explode(' ', $text[1]);
-        $text = $this->translator->trans(
-            'chat.uninviteToChannel',
-            [
-                'chat.channel' => $textSplitted[1]
-            ],
-            'chat',
-            $this->locale
-        );
-
-        return [
-            'showText' => $text,
-            'userId' => ChatConfig::getBotId()
-        ];
     }
 
     private function banUser(array $textSplitted, User $user): array
@@ -668,6 +561,7 @@ class SpecialMessages
 
         $this->em->persist($message);
         $this->em->flush();
+        $this->session->set('afkMessage', $message);
 
         return ['userId' => ChatConfig::getBotId(), 'message' => $message, 'text' => $text, 'count' => 1];
     }
