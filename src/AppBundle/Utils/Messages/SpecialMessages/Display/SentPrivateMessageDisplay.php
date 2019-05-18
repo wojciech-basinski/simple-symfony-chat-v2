@@ -23,11 +23,11 @@ class SentPrivateMessageDisplay implements SpecialMessageDisplay
     {
         $textSplitted = explode(' ', $textSplitted[1], 2);
         $text = $this->translator->trans(
-                'chat.privTo',
-                ['chat.user' => $textSplitted[0]],
-                'chat',
-                $this->translator->getLocale()
-            ) . ' ' . $textSplitted[1];
+            'chat.privTo',
+            ['chat.user' => $textSplitted[0]],
+            'chat',
+            $this->translator->getLocale()
+        ) . ' ' . $textSplitted[1];
 
         return [
             'showText' => $text,
