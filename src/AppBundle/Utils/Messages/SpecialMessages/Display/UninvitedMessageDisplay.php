@@ -5,7 +5,7 @@ namespace AppBundle\Utils\Messages\SpecialMessages\Display;
 use AppBundle\Utils\ChatConfig;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class InviteMessageDisplay implements SpecialMessageDisplay
+class UninvitedMessageDisplay implements SpecialMessageDisplay
 {
     /**
      * @var TranslatorInterface
@@ -29,10 +29,9 @@ class InviteMessageDisplay implements SpecialMessageDisplay
     {
         $textSplitted = explode(' ', $textSplitted[1]);
         $text = $this->translator->trans(
-            'chat.inviteToChannel',
+            'chat.uninviteSent',
             [
-                'chat.user' => $textSplitted[0],
-                'chat.channel' => $textSplitted[1]
+                'chat.user' => $textSplitted[0]
             ],
             'chat',
             $this->translator->getLocale()

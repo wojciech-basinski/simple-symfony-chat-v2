@@ -87,7 +87,6 @@ class ChatConfig
      */
     private $invitations;
 
-
     public function __construct(
         AuthorizationCheckerInterface $auth,
         EntityManagerInterface $em
@@ -107,6 +106,11 @@ class ChatConfig
             $this->specialChannels() +
             $this->getUserPrivateChannel($user) +
             $this->getChannelsFromInvitations($user);
+    }
+
+    public function getDefaultChannels(): array
+    {
+        return self::DEFAULT_CHANNELS;
     }
 
     public function getBotId(): int
