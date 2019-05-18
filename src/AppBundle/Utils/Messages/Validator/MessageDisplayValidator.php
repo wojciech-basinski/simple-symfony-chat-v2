@@ -16,6 +16,7 @@ class MessageDisplayValidator
     {
         $this->channel = $channel;
     }
+
     /**
      * Checking if message can be displayed on chat, unset messages that cannot be displayed
      *
@@ -27,9 +28,9 @@ class MessageDisplayValidator
      */
     public function checkIfMessagesCanBeDisplayed(array $messages, User $user): array
     {
-        $count = count($messages);
+        $count = \count($messages);
         for ($i = 0; $i < $count; $i++) {
-            $textSplitted = explode(' ', $messages[$i]['text']);
+            $textSplitted = \explode(' ', $messages[$i]['text']);
             if ($textSplitted[0] === '/delete') {
                 unset($messages[$i]);
             }

@@ -26,57 +26,25 @@ services:
 
     checkLoginMyBB:
         class: AppBundle\EventListener\LoginByMyBBListener
-        arguments: ['@session', '@doctrine.orm.entity_manager', '@security.token_storage',
-                    '@router', '@request_stack', '@fos_user.user_manager'
-                    ]
         tags:
             - { name: kernel.event_subscriber }
 
     checkLoginPhpBB:
         class: AppBundle\EventListener\LoginByPhpBBListener
-        arguments: ['@session', '@doctrine.orm.entity_manager', '@security.token_storage',
-                    '@router', '@request_stack', '@fos_user.user_manager'
-                    ]
         tags:
             - { name: kernel.event_subscriber }
 
-    chat.registration_complet:
+    chat.registration_complete:
         class: AppBundle\EventListener\RegistrationCompleteListener
         arguments: ['@router']
         tags:
             - { name: kernel.event_subscriber }
 
-    chat.Message:
-        public: true
-        class: AppBundle\Utils\Message
-        arguments: ['@doctrine.orm.entity_manager', '@session', '@chat.ChatConfig', '@chat.SpecialMessage']
-
-    chat.OnlineUsers:
-        public: true
-        class: AppBundle\Utils\UserOnline
-        arguments: ['@doctrine.orm.entity_manager', '@chat.ChatConfig']
-
-    chat.ChatConfig:
-        public: true
-        class: AppBundle\Utils\ChatConfig
-        arguments: ['@security.authorization_checker']
-
-    chat.Channel:
-        public: true
-        class: AppBundle\Utils\Channel
-        arguments: ['@chat.ChatConfig', '@session', '@chat.OnlineUsers']
 
     chat.AdminPanel:
         public: true
         class: AppBundle\Utils\AdminPanel
         arguments: ['@doctrine.orm.entity_manager']
-
-    chat.SpecialMessage:
-        public: true
-        class: AppBundle\Utils\SpecialMessages
-        arguments: ['@translator', '@doctrine.orm.entity_manager', '@chat.ChatConfig']
-
-    AppBundle\Utils\Logs: ~
 
     admin.user:
         class: AppBundle\Admin\UserAdmin
@@ -96,3 +64,5 @@ services:
         class: Gedmo\SoftDeleteable\SoftDeleteableListener
         tags:
         - { name: doctrine.event_subscriber, connection: default }
+
+    Symfony\Component\Cache\Simple\FilesystemCache: ~

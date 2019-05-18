@@ -27,6 +27,7 @@ $(document).ready(function () {
     var channelsOnChat = [];
     var messagesOnChannel = [];
     var rollLocked = false;
+    var refresh;
 
     window.onblur = function () {
         active = false;
@@ -195,17 +196,20 @@ $(document).ready(function () {
 
     function sendMessage(text) {
         statusInProgress();
-        if (text === undefined) {
-            text = $('#message-text').val();
+        textSend = text;
+        if (textSend === undefined) {
+            textSend = $('#message-text').val();
         }
-        if (text === '') {
+        if (textSend === '') {
             return;
         }
         var params = {
-            'text': text
+            'text': textSend
         };
-        $('#message-text').val("");
-        $('#message-text').focus();
+        if (text === undefined) {
+            $('#message-text').val("");
+            $('#message-text').focus();
+        }
         $.ajax({
             type: "POST",
             dataType: "json",
@@ -216,16 +220,11 @@ $(document).ready(function () {
                 $('#modal-text').text(json.errorMessage);
                 $('#modal-error').modal();
             } else {
-                insertSentMessage(json);
                 playSound(sendMessageSound);
             }
-            if (json.messages) {
-                $.each(json.messages, function (key, val) {
-                    createNewMessage(val);
-                });
-            }
+            clearTimeout(refresh);
+            refreshChat();
             statusOk();
-            setTimeout(scrollMessages, 100);
         });
     }
 
@@ -423,7 +422,7 @@ $(document).ready(function () {
             }
             statusOk();
         });
-        setTimeout(refreshChat, 1500);
+        refresh = setTimeout(refreshChat, 1500);
     }
 
     function createDate(dateInput) {
@@ -620,7 +619,7 @@ $(document).ready(function () {
                 return '<img src="' + emoticonsImg[i] + '" class="emoticon-img kursor" alt="' + alt + '"/>';
             });
         }
-        setTimeout(refreshChat, 1500);
+        refresh = setTimeout(refreshChat, 1500);
     }
 
     function parseBbCode(message) {

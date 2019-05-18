@@ -5,7 +5,7 @@ namespace AppBundle\Utils\Messages\SpecialMessages\Display;
 use AppBundle\Utils\ChatConfig;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class InviteMessageDisplay implements SpecialMessageDisplay
+class BanListDisplay implements SpecialMessageDisplay
 {
     /**
      * @var TranslatorInterface
@@ -16,7 +16,7 @@ class InviteMessageDisplay implements SpecialMessageDisplay
      */
     private $config;
 
-    public function __construct(TranslatorInterface $translator, ChatConfig $config)
+    public function __construct(TranslatorInterface $translator, ChatConfig  $config)
     {
         $this->translator = $translator;
         $this->config = $config;
@@ -27,19 +27,15 @@ class InviteMessageDisplay implements SpecialMessageDisplay
      */
     public function display(array $textSplitted): array
     {
-        $textSplitted = explode(' ', $textSplitted[1]);
         $text = $this->translator->trans(
-            'chat.inviteToChannel',
-            [
-                'chat.user' => $textSplitted[0],
-                'chat.channel' => $textSplitted[1]
-            ],
+            'chat.bannedUser',
+            [],
             'chat',
             $this->translator->getLocale()
         );
 
         return [
-            'showText' => $text,
+            'showText' => $text . ' ' . $textSplitted[1],
             'userId' => $this->config->getBotId()
         ];
     }

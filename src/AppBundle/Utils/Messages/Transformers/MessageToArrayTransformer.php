@@ -49,7 +49,7 @@ class MessageToArrayTransformer
         ];
 
         $textSplitted = explode(' ', $message->getText());
-        if ($textSplitted[0] == '/delete') {
+        if ($textSplitted[0] === '/delete') {
             $returnedArray['id'] = $textSplitted[1];
             $returnedArray['text'] = 'delete';
         }

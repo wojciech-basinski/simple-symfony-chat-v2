@@ -37,7 +37,7 @@ chat:
     privFrom: (PW)
     privTo: (PW do chat.user)
     inviteToChannel: Użytkownik chat.user zaprosił Cię do kanału [chat.channel]
-    invitationSent: Wysłano zaproszenie do kanału dla gracza chat.user
+    invitationSent: Wysłano zaproszenie do kanału [chat.channel] dla gracza chat.user
     uninviteSent: Wyproszono użytkownika chat.user
     uninviteToChannel: Wyproszono Cię z kanału [chat.channel]
     banned: Użytkownik chat.user został zbanowany

@@ -32,14 +32,6 @@ class MessageGetter
      */
     private $logger;
     /**
-     * @var Channel
-     */
-    private $channel;
-    /**
-     * @var Request
-     */
-    private $request;
-    /**
      * @var MessageToArrayTransformer
      */
     private $messageTransformer;
@@ -53,17 +45,13 @@ class MessageGetter
         SessionInterface $session,
         ChatConfig $config,
         LoggerInterface $logger,
-        Channel $channel,
-        RequestStack $request,
         MessageToArrayTransformer $messageTransformer,
         MessageDisplayValidator $messageDisplayValidator
     ) {
-        $this->request = $request->getCurrentRequest();
         $this->em = $em;
         $this->session = $session;
         $this->config = $config;
         $this->logger = $logger;
-        $this->channel = $channel;
         $this->messageTransformer = $messageTransformer;
         $this->messageDisplayValidator = $messageDisplayValidator;
     }
@@ -120,13 +108,13 @@ class MessageGetter
             );
 
         //if get new messages, update var lastId in session
-        if (end($messages)) {
-            $this->session->set('lastId', end($messages)->getId());
+        if (\end($messages)) {
+            $this->session->set('lastId', \end($messages)->getId());
         }
         $messages = $this->messageTransformer->transformMessagesToArray($messages);
 
         $messagesToDisplay = $this->messageDisplayValidator->checkIfMessagesCanBeDisplayed($messages, $user);
-        usort($messagesToDisplay, static function ($a, $b) {
+        \usort($messagesToDisplay, static function ($a, $b) {
             return $a <=> $b;
         });
 
@@ -137,7 +125,6 @@ class MessageGetter
      * Gets messages from last 24h from new channel, then set id of last message to session if any message exists,
      * than change messages from entitys to array and checking if messages can be displayed
      *
-     * @param int $channel Channel's Id
      * @param User $user Current user
      *
      * @return array Array of messages changed to array
@@ -145,7 +132,7 @@ class MessageGetter
     private function getMessagesAfterChangingChannel(User $user): array
     {
         $messages = $this->getMessagesInIndex($user);
-        usort($messages, static function ($a, $b) {
+        \usort($messages, static function ($a, $b) {
             return $a <=> $b;
         });
 

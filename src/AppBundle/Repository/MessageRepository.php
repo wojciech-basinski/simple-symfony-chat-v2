@@ -4,12 +4,9 @@ namespace AppBundle\Repository;
 
 use AppBundle\Entity\User;
 use AppBundle\Utils\ChatConfig;
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 
-/**
- * MessageRepository
- *
- */
 class MessageRepository extends EntityRepository
 {
     /**
@@ -93,6 +90,7 @@ class MessageRepository extends EntityRepository
      * Gets id of only last message on chat
      *
      * @return int message's id
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getIdFromLastMessage(): int
     {
@@ -124,7 +122,7 @@ class MessageRepository extends EntityRepository
             ->getResult();
     }
 
-    public function findBetweenTwoDates(\DateTime $start, \DateTime $end, int $privChannel, ?User $user): array
+    public function findBetweenTwoDates(DateTime $start, DateTime $end, int $privChannel, ?User $user): array
     {
         $em = $this->createQueryBuilder('m')
             ->where('m.date >= :start')
@@ -141,9 +139,13 @@ class MessageRepository extends EntityRepository
             ->getResult();
     }
 
-    private function getDateOneDayEarlier(): \DateTime
+    /**
+     * @return DateTime
+     * @throws \Exception
+     */
+    private function getDateOneDayEarlier(): DateTime
     {
-        $date = new \DateTime('now');
+        $date = new DateTime('now');
         $date->modify('-1 day');
         return $date;
     }
@@ -159,5 +161,24 @@ class MessageRepository extends EntityRepository
             $return[] = $value;
         }
         return $return;
+    }
+
+    public function addBotMessage(string $text, int $channel, User $bot, string $ip): void
+    {
+        $this->_em->getConnection()
+            ->createQueryBuilder()
+            ->insert('message')
+            ->values([
+                'text' => ':text',
+                'user_id' => ':userId',
+                'channel' => ':channel',
+                'date' => 'now()',
+                'ip' => ':ip'
+            ])
+            ->setParameter('text', $text)
+            ->setParameter('ip', $ip)
+            ->setParameter('channel', $channel)
+            ->setParameter('userId', $bot->getId())
+            ->execute();
     }
 }

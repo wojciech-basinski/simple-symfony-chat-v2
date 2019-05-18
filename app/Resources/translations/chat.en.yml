@@ -37,7 +37,7 @@ chat:
     privFrom: (PM)
     privTo: (PM to chat.user)
     inviteToChannel: User chat.user invited you to channel [chat.channel]
-    invitationSent: Sent invitation to channel for user chat.user
+    invitationSent: Sent invitation to channel [chat.channel] for user chat.user
     uninviteSent: User chat.user has been uninvited
     uninviteToChannel: You have been uninvited from channel [chat.channel]
     banned: User chat.user has been banned

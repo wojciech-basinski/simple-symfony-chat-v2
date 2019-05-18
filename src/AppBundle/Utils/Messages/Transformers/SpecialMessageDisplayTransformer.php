@@ -22,12 +22,11 @@ class SpecialMessageDisplayTransformer
         if ($displayService === null) {
             return ['userId' => false];
         }
-        return $this->messageServiceFactory->getDisplayService($text)
-            ->display($this->explodeText($text));
+        return $displayService->display($this->explodeText($text));
     }
 
     private function explodeText(string $text): array
     {
-        return explode(' ', $text, 2);
+        return \explode(' ', $text, 2);
     }
 }

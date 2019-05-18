@@ -4,7 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Utils\Channel;
 use AppBundle\Utils\ChatConfig;
-use AppBundle\Utils\Message;
+use AppBundle\Utils\Messages\AddMessage;
 use AppBundle\Utils\Messages\DeleteMessage;
 use AppBundle\Utils\Messages\MessageGetter;
 use AppBundle\Utils\UserOnline;
@@ -82,17 +82,19 @@ class ChatController extends Controller
      * Check if message can be added to database and get messages that was wrote between
      * last refresh and calling this method
      *
-     * @param Request $request A Request instance
-     * @param Message $message
+     * @param Request $request
+     * @param AddMessage $message
+     * @param SessionInterface $session
      *
      * @return JsonResponse returns status success or failure and new messages
      */
-    public function addAction(Request $request, Message $message): Response
+    public function addAction(Request $request, AddMessage $message, SessionInterface $session): Response
     {
         $messageText = $request->get('text');
         $user = $this->getUser();
+        $channel = $session->get('channel');
 
-        $status = $message->addMessageToDatabase($user, $messageText);
+        $status = $message->addMessageToDatabase($user, $messageText, $channel);
         return $this->json($status);
     }
 
@@ -129,7 +131,7 @@ class ChatController extends Controller
             $messages = $messageGetter->getMessagesFromLastId($this->getUser());
         }
         $typing = $request->request->get('typing');
-        $typing = in_array($typing, [0, 1]) ? $typing : 0;
+        $typing = \in_array($typing, [0, 1]) ? $typing : 0;
 
         $changeChannel = 0;
         if ($userOnlineService->updateUserOnline($this->getUser(), $session->get('channel'), (bool) $typing)) {
@@ -244,14 +246,14 @@ class ChatController extends Controller
         ];
 
         $url = $request->query->get('url');
-        if (!$url || in_array($url, $blockedImg)) {
+        if (!$url || \in_array($url, $blockedImg)) {
             return new Response('', 404);
         }
         $response = new Response();
         $disposition = $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_INLINE, 'name');
         $response->headers->set('Content-Disposition', $disposition);
         $response->headers->set('Content-Type', 'image/jpeg');
-        $response->setContent(file_get_contents($url));
+        $response->setContent(\file_get_contents($url));
         return $response;
     }
 }

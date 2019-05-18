@@ -2824,8 +2824,8 @@
                     <div id="channels" class="collapse in"></div>
                     <div class="text-bold info-text" role="button" data-toggle="collapse"
                          href="#users-box" aria-expanded="true">{{ 'online'|trans }}:</div>
+                    <div class="{{ user.getChatRoleAsText }} text-in-info" id="username">{{ user.username }}</div>
                     <div id="users-box" class="collapse in">
-                        <div class="{{ user.getChatRoleAsText }} text-in-info" id="username">{{ user.username }}</div>
                     </div>
                     <div class="logout">
                         {% if is_granted('ROLE_ADMIN') %}

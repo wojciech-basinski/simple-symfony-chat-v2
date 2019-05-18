@@ -3,12 +3,17 @@
 namespace AppBundle\Utils\Messages\Factory;
 
 use AppBundle\Utils\Messages\SpecialMessages\Display\AfkMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\BanListDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\BannedUserDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\InvitedMessageDisplay;
 use AppBundle\Utils\Messages\SpecialMessages\Display\InviteMessageDisplay;
 use AppBundle\Utils\Messages\SpecialMessages\Display\ReceivedPrivateMessageDisplay;
 use AppBundle\Utils\Messages\SpecialMessages\Display\ReturnFromAfkDisplay;
 use AppBundle\Utils\Messages\SpecialMessages\Display\SentPrivateMessageDisplay;
 use AppBundle\Utils\Messages\SpecialMessages\Display\RollMessageDisplay;
 use AppBundle\Utils\Messages\SpecialMessages\Display\SpecialMessageDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\UnBanUserDisplay;
+use AppBundle\Utils\Messages\SpecialMessages\Display\UninvitedMessageDisplay;
 use AppBundle\Utils\Messages\SpecialMessages\Display\UninviteMessageDisplay;
 
 class DisplayMessageServiceFactory
@@ -41,6 +46,26 @@ class DisplayMessageServiceFactory
      * @var ReturnFromAfkDisplay
      */
     private $returnFromAfkDisplay;
+    /**
+     * @var BanListDisplay
+     */
+    private $banListDisplay;
+    /**
+     * @var BannedUserDisplay
+     */
+    private $bannedUserDisplay;
+    /**
+     * @var UnBanUserDisplay
+     */
+    private $unBanUserDisplay;
+    /**
+     * @var InvitedMessageDisplay
+     */
+    private $invitedMessageDisplay;
+    /**
+     * @var UninvitedMessageDisplay
+     */
+    private $uninvitedMessageDisplay;
 
     public function __construct(
         RollMessageDisplay $rollDisplay,
@@ -49,7 +74,12 @@ class DisplayMessageServiceFactory
         InviteMessageDisplay $inviteMessageDisplay,
         UninviteMessageDisplay $uninviteMessageDisplay,
         AfkMessageDisplay $afkMessageDisplay,
-        ReturnFromAfkDisplay $returnFromAfkDisplay
+        ReturnFromAfkDisplay $returnFromAfkDisplay,
+        BanListDisplay $banListDisplay,
+        BannedUserDisplay $bannedUserDisplay,
+        UnBanUserDisplay $unBanUserDisplay,
+        InvitedMessageDisplay $invitedMessageDisplay,
+        UninvitedMessageDisplay $uninvitedMessageDisplay
     ) {
         $this->rollDisplay = $rollDisplay;
         $this->sentPrivateMessageDisplay = $sentPrivateMessageDisplay;
@@ -58,6 +88,11 @@ class DisplayMessageServiceFactory
         $this->uninviteMessageDisplay = $uninviteMessageDisplay;
         $this->afkMessageDisplay = $afkMessageDisplay;
         $this->returnFromAfkDisplay = $returnFromAfkDisplay;
+        $this->banListDisplay = $banListDisplay;
+        $this->bannedUserDisplay = $bannedUserDisplay;
+        $this->unBanUserDisplay = $unBanUserDisplay;
+        $this->invitedMessageDisplay = $invitedMessageDisplay;
+        $this->uninvitedMessageDisplay = $uninvitedMessageDisplay;
     }
 
     public function getDisplayService(string $text): ?SpecialMessageDisplay
@@ -73,15 +108,24 @@ class DisplayMessageServiceFactory
                 return $this->receivedPrivateMessageDisplay;
             case '/invite':
                 return $this->inviteMessageDisplay;
+            case '/invited':
+                return $this->invitedMessageDisplay;
             case '/uninvite':
                 return $this->uninviteMessageDisplay;
+            case '/uninvited':
+                return $this->uninvitedMessageDisplay;
             case '/afk':
                 return $this->afkMessageDisplay;
             case '/returnAfk':
                 return $this->returnFromAfkDisplay;
+            case '/banlist':
+                return $this->banListDisplay;
+            case '/banned':
+                return $this->bannedUserDisplay;
+            case '/unban':
+                return $this->unBanUserDisplay;
             default:
                 return null;
         }
-
     }
 }
