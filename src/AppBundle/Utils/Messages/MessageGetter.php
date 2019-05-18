@@ -84,7 +84,8 @@ class MessageGetter
     }
 
     /**
-     * Gets messages from database from last id read from session, then set id of last message to session if any message exists,
+     * Gets messages from database from last id read from session,
+     * then set id of last message to session if any message exists,
      * than change messages from entitys to array and checking if messages can be displayed
      *
      * @param User $user

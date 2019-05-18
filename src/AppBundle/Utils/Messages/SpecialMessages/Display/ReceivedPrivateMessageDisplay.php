@@ -15,6 +15,7 @@ class ReceivedPrivateMessageDisplay implements SpecialMessageDisplay
     {
         $this->translator = $translator;
     }
+
     public function display(array $textSplitted): array
     {
         $text = $this->translator->trans(
@@ -22,7 +23,7 @@ class ReceivedPrivateMessageDisplay implements SpecialMessageDisplay
             [],
             'chat',
             $this->translator->getLocale()
-            ) . ' ' . $textSplitted[1];
+        ) . ' ' . $textSplitted[1];
 
         return [
             'showText' => $text,

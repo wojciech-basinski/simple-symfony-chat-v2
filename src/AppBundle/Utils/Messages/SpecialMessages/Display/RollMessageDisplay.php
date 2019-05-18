@@ -29,7 +29,8 @@ class RollMessageDisplay implements SpecialMessageDisplay
             $this->translator->trans(
                 'chat.roll',
                 ['chat.dice' => $textSplitted[0]],
-                'chat', $this->translator->getLocale()
+                'chat',
+                $this->translator->getLocale()
             ) . ' ' . $textSplitted[2];
 
         return [
