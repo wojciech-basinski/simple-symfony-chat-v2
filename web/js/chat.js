@@ -28,18 +28,39 @@ $(document).ready(function () {
     var messagesOnChannel = [];
     var rollLocked = false;
     var refresh;
+    var afkTimeout;
+    var afk = false;
 
     window.onblur = function () {
         active = false;
         removeLineNewMessages();
         clearTimeout(removeLine);
+        afkTimeout = setTimeout(setAfk, 180000);
     };
+
     window.onfocus = function () {
         active = true;
         newMessagesCount = 0;
         document.title = title;
         removeLine = setTimeout(removeLineNewMessages, 8000);
+        clearTimeout(afkTimeout);
+        setReturnFromAfk();
     };
+
+    function setAfk() {
+        if (afk === false) {
+            sendMessage('/afk');
+            afk = true;
+        }
+    }
+
+    function setReturnFromAfk() {
+        if (afk === true) {
+            sendMessage('/afk');
+            afk = false;
+        }
+    }
+
 
     statusInProgress();
     startChat();
