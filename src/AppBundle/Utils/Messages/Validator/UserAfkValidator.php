@@ -24,6 +24,7 @@ class UserAfkValidator
 
     public function validateUserAfk(string $text): bool
     {
-        return $this->session->get('afk') && !in_array($text, self::AFK_MESSAGES_KEYS, true);
+        $textSplitted = explode(' ', $text, 2);
+        return $this->session->get('afk') && !in_array($textSplitted[0], self::AFK_MESSAGES_KEYS, true);
     }
 }
