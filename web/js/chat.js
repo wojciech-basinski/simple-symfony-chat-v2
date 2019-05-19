@@ -49,14 +49,14 @@ $(document).ready(function () {
 
     function setAfk() {
         if (afk === false) {
-            sendMessage('/afk');
+            sendMessage('/afk no-message');
             afk = true;
         }
     }
 
     function setReturnFromAfk() {
         if (afk === true) {
-            sendMessage('/afk');
+            sendMessage('/afk no-message');
             afk = false;
         }
     }

@@ -44,10 +44,10 @@ class AfkMessageCreate implements SpecialMessageAdd
      */
     public function add(array $text, User $user, int $channel): bool
     {
-        return $this->afk($user, $channel);
+        return $this->afk($text, $user, $channel);
     }
 
-    private function afk(User $user, int $channel): bool
+    private function afk(array $text, User $user, int $channel): bool
     {
         $userOnline = $this->em->getRepository(UserOnline::class)->findOneBy(['userId' => $user->getId()]);
         if ($userOnline === null) {
@@ -59,31 +59,33 @@ class AfkMessageCreate implements SpecialMessageAdd
         }
 
         if ($userOnline->getAfk()) {
-            return $this->removeAfk($user, $userOnline, $channel);
+            return $this->removeAfk($text, $user, $userOnline, $channel);
         }
 
         $userOnline->setAfk(true);
         $this->session->set('afk', true);
-
-        $this->addMessageToDatabase->addBotMessage(
-            $this->createAfkText($user),
-            $channel
-        );
+        if (!isset($text[1])) {
+            $this->addMessageToDatabase->addBotMessage(
+                $this->createAfkText($user),
+                $channel
+            );
+        }
 
         $this->updateUserOnline($userOnline);
         return true;
     }
 
-    private function removeAfk(User $user, UserOnline $userOnline, int $channel): bool
+    private function removeAfk(array $text, User $user, UserOnline $userOnline, int $channel): bool
     {
         $userOnline->setAfk(false);
         $this->session->set('afk', false);
 
-
-        $this->addMessageToDatabase->addBotMessage(
-            $this->createReturnFromAfkText($user),
-            $channel
-        );
+        if (!isset($text[1])) {
+            $this->addMessageToDatabase->addBotMessage(
+                $this->createReturnFromAfkText($user),
+                $channel
+            );
+        }
 
         $this->updateUserOnline($userOnline);
         return true;
