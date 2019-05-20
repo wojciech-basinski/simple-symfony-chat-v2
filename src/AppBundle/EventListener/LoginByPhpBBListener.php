@@ -78,7 +78,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
         }
         $cookie = (int)$this->request->cookies->get('phpbb3_1umhw_u');
         $cookieSession = $this->request->cookies->get('phpbb3_1umhw_sid');
-        if (!$cookie || $cookie == 1 || !$cookieSession) {
+        if (!$cookie || $cookie === 1 || !$cookieSession) {
             $event->setController(function () {
                 if ($this->request->server->get('HTTPS')) {
                     $path = 'https://';
@@ -92,15 +92,17 @@ class LoginByPhpBBListener implements EventSubscriberInterface
         if ($this->tokenStorage->getToken() === null || !($this->tokenStorage->getToken()->getUser() instanceof User)) {
             $connection = $this->em->getConnection()->getWrappedConnection();
 
-            $value = $connection->prepare('SELECT * FROM phpbb_sessions WHERE session_user_id = :id and session_id = :sessionId');
-            $value->bindValue(':id', (int)$cookie);
+            $value = $connection->prepare(
+                'SELECT * FROM phpbb_sessions WHERE session_user_id = :id and session_id = :sessionId'
+            );
+            $value->bindValue(':id', $cookie);
             $value->bindValue('sessionId', $cookieSession);
             $value->execute();
             $value = $value->fetchAll(\PDO::FETCH_ASSOC);
 
             if ($value) {
                 $value2 = $connection->prepare('SELECT * FROM phpbb_users WHERE user_id = :id ');
-                $value2->bindValue(':id', (int)$cookie);
+                $value2->bindValue(':id', $cookie);
                 $value2->execute();
                 $value2 = $value2->fetchAll(\PDO::FETCH_ASSOC);
                 if (!$this->em->find('AppBundle:User', $cookie)) {
@@ -141,7 +143,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
                     $this->em->flush();
                     $path = $this->router->generate('add_online');
                     $event->setController(
-                        function () use ($path) {
+                        static function () use ($path) {
                             return new RedirectResponse($path);
                         }
                     );
