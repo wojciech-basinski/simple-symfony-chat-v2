@@ -48,7 +48,12 @@ class Banned
         if ($this->user !== null) {
             return $this->user;
         }
-        $this->user = $this->em->getRepository(User::class)->findOneByUsername($userName);
+        /** @var User|null user */
+        $user = $this->em->getRepository(User::class)->findOneBy(['username' => $userName]);
+        if ($user === null) {
+            throw new \RuntimeException('could not find user');
+        }
+        $this->user = $user;
         return $this->user;
     }
 }

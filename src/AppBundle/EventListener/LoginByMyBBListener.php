@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -35,7 +36,7 @@ class LoginByMyBBListener implements EventSubscriberInterface
      */
     private $session;
     /**
-     * @var RequestStack
+     * @var Request
      */
     private $request;
     /**
@@ -56,7 +57,11 @@ class LoginByMyBBListener implements EventSubscriberInterface
         $this->router = $router;
         $this->session = $session;
         $this->userManager = $userManager;
-        $this->request = $request->getCurrentRequest();
+        $currentRequest = $request->getCurrentRequest();
+        if ($currentRequest === null) {
+            throw new \RuntimeException('could not find request');
+        }
+        $this->request = $currentRequest;
     }
 
     public function onKernelController(FilterControllerEvent $event): void
@@ -77,7 +82,7 @@ class LoginByMyBBListener implements EventSubscriberInterface
                 return new RedirectResponse($path);
             });
         }
-        if (!($this->tokenStorage->getToken()->getUser() instanceof User)) {
+        if ($this->tokenStorage->getToken() === null || !($this->tokenStorage->getToken()->getUser() instanceof User)) {
             $connection = $this->em->getConnection()->getWrappedConnection();
             $cookieParts = explode('_', $cookie);
             $userId = $cookieParts[0];
@@ -91,7 +96,7 @@ class LoginByMyBBListener implements EventSubscriberInterface
                 if (!$this->em->find('AppBundle:User', $userId)) {
                     $user = new User();
                     $user->setUsername($value[0]['username']);
-                    $user->setId($userId);
+                    $user->setId((int)$userId);
                     $user->setEmail($value[0]['email']);
                     $user->setPassword('');
                     if ($value[0]['usergroup'] === 4) {
@@ -130,7 +135,9 @@ class LoginByMyBBListener implements EventSubscriberInterface
     private function logUser(array $value): void
     {
         $user = $this->userManager->findUserByUsername($value[0]['username']);
-
+        if ($user === null) {
+            throw new \RuntimeException('could not find user');
+        }
         $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
         $this->tokenStorage->setToken($token);
 

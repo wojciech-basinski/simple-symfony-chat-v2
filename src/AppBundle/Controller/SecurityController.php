@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class SecurityController extends Controller
 {
@@ -20,12 +21,15 @@ class SecurityController extends Controller
      *
      * @param UserOnline $userOnline
      *
+     * @param SessionInterface $session
+     *
      * @return Response
+     * @throws \Exception
      */
-    public function addOnlineUserAction(UserOnline $userOnline): Response
+    public function addOnlineUserAction(UserOnline $userOnline, SessionInterface $session): Response
     {
         $user = $this->getUser();
-        $this->get('session')->set('channel', 1);
+        $session->set('channel', 1);
         if ($userOnline->addUserOnline($user, 1)) {
             return $this->redirectToRoute('banned');
         }

@@ -95,7 +95,7 @@ class Message
         return $this->id;
     }
 
-    public function setUserId(?int $userId): Message
+    public function setUserId(int $userId): Message
     {
         $this->userId = $userId;
 

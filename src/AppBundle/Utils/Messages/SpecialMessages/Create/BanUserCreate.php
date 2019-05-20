@@ -72,7 +72,7 @@ class BanUserCreate implements SpecialMessageAdd
             return $this->wrongUsernameError();
         }
         /** @var User $userToBan */
-        $userToBan = $this->em->getRepository(User::class)->findOneByUsername($textParts[0]);
+        $userToBan = $this->em->getRepository(User::class)->findOneBy(['username' => $textParts[0]]);
 
         return $this->banUser($userToBan, $user, $textParts);
     }
@@ -109,7 +109,7 @@ class BanUserCreate implements SpecialMessageAdd
 
     private function calculateBanLength(array $textParts): int
     {
-        return count($textParts) > 1 && is_numeric($textParts[1]) ? $textParts[1] * 60 : 360;
+        return count($textParts) > 1 && is_numeric($textParts[1]) ? (int)$textParts[1] * 60 : 360;
     }
 
     private function getReason(array $textParts): string

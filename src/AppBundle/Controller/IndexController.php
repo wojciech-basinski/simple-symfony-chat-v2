@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class IndexController extends Controller
 {
@@ -13,12 +14,13 @@ class IndexController extends Controller
      *
      * Generates homepage, redirect to chat if user is logged in
      *
+     * @param AuthorizationCheckerInterface $auth
+     *
      * @return Response
      */
-    public function indexAction(): Response
+    public function indexAction(AuthorizationCheckerInterface $auth): Response
     {
-        $securityContext = $this->container->get('security.authorization_checker');
-        if ($securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+        if ($auth->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
             return $this->redirectToRoute('chat_index');
         }
 

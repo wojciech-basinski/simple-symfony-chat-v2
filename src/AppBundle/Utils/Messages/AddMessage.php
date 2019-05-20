@@ -63,10 +63,11 @@ class AddMessage
      * @param int $channel
      *
      * @return array status of adding messages, and new messages from last refresh
+     * @throws \Exception
      */
-    public function addMessageToDatabase(User $user, ?string $text, int $channel): array
+    public function addMessageToDatabase(User $user, string $text, int $channel): array
     {
-        if (false === $this->validateMessage($user, $text, $channel)) {
+        if ($this->validateMessage($user, $text, $channel) === false) {
             return $this->returnFail();
         }
 

@@ -12,7 +12,9 @@ class BannedController extends Controller
     /**
      * @Route("/banned", name="banned")
      * @param Banned $banned
+     *
      * @return Response
+     * @throws \Exception
      */
     public function bannedAction(Banned $banned): Response
     {
@@ -22,6 +24,9 @@ class BannedController extends Controller
         $userName = $this->getUser()->getUsername();
         $reason = $banned->getReason($userName);
         $time = $banned->getTime($userName);
+        if ($time === null) {
+            return $this->redirectToRoute('chat_index');
+        }
         if ($time <= new \DateTime('now')) {
             $banned->removeBan($userName);
             $this->addFlash('success', 'Ban został zdjęty, zaloguj się ponownie');

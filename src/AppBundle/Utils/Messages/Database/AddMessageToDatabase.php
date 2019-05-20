@@ -4,6 +4,7 @@ namespace AppBundle\Utils\Messages\Database;
 
 use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
+use AppBundle\Repository\MessageRepository;
 use AppBundle\Utils\Cache\GetBotUserFromCache;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,9 +22,9 @@ class AddMessageToDatabase
      */
     private $em;
     /**
-     * @var Request
+     * @var RequestStack
      */
-    private $request;
+    private $requestStack;
 
     public function __construct(
         GetBotUserFromCache $botUserFromCache,
@@ -32,19 +33,38 @@ class AddMessageToDatabase
     ) {
         $this->botUserFromCache = $botUserFromCache;
         $this->em = $em;
-        $this->request = $requestStack->getCurrentRequest();
+        $this->requestStack = $requestStack;
     }
 
     public function addBotMessage(string $text, int $channel): void
     {
+        if ($this->requestStack->getCurrentRequest() === null) {
+            throw new \RuntimeException('Could not find request');
+        }
         $bot = $this->botUserFromCache->getChatBotUser();
-        $this->em->getRepository(Message::class)
-            ->addBotMessage($text, $channel, $bot, $this->request->server->get('REMOTE_ADDR'));
+        /** @var MessageRepository $repository */
+        $repository = $this->em->getRepository(Message::class);
+        $repository->addBotMessage(
+            $text,
+            $channel,
+            $bot,
+            $this->requestStack->getCurrentRequest()->server->get('REMOTE_ADDR')
+        );
     }
 
+    /**
+     * @param string $text
+     * @param int $channel
+     * @param User $user
+     *
+     * @throws \Exception
+     */
     public function addMessage(string $text, int $channel, User $user): void
     {
-        $message = (new Message())->setIp($this->request->server->get('REMOTE_ADDR'))
+        if ($this->requestStack->getCurrentRequest() === null) {
+            throw new \RuntimeException('Could not find request');
+        }
+        $message = (new Message())->setIp($this->requestStack->getCurrentRequest()->server->get('REMOTE_ADDR'))
             ->setChannel($channel)
             ->setDate(new DateTime())
             ->setUserInfo($user)

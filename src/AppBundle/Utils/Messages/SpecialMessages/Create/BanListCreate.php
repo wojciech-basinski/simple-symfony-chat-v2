@@ -3,6 +3,7 @@
 namespace AppBundle\Utils\Messages\SpecialMessages\Create;
 
 use AppBundle\Entity\User;
+use AppBundle\Repository\UserRepository;
 use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\Messages\Database\AddMessageToDatabase;
 use Doctrine\ORM\EntityManagerInterface;
@@ -92,8 +93,10 @@ class BanListCreate implements SpecialMessageAdd
     private function getListBannedText(): string
     {
         $text = '/banlist';
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->em->getRepository(User::class);
         /** @var User[] $bannedUsers */
-        $bannedUsers = $this->em->getRepository(User::class)->getBannedUsers();
+        $bannedUsers = $userRepository->getBannedUsers();
         foreach ($bannedUsers as $user) {
             $text .= ' ' . $user->getUsername() .', ';
         }

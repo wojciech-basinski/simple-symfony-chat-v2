@@ -19,7 +19,7 @@ class MessageToArrayTransformer
     /**
      * Changing mesages from entity to array
      *
-     * @param $messages array[Message]|Message Messages to changed
+     * @param Message[] $messages Messages to changed
      *
      * @return array
      */

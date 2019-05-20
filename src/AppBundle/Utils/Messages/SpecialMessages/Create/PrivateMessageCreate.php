@@ -60,6 +60,7 @@ class PrivateMessageCreate implements SpecialMessageAdd
             return $this->wrongUsernameError();
         }
         $textSplitted = explode(' ', $text[1], 2);
+        /** @var User|null $secondUser */
         $secondUser = $this->em->getRepository('AppBundle:User')->findOneBy(['username' => $textSplitted[0]]);
         return $this->insertPrivMessage($user, $secondUser, $textSplitted);
     }

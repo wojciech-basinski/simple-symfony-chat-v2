@@ -76,6 +76,9 @@ class Channel
 
     public function checkIfUserCanBeOnThatChannel(User $user, ?int $channel): bool
     {
+        if ($channel === null) {
+            return false;
+        }
         if ($channel === $this->config->getUserPrivateMessageChannelId($user)) {
             return true;
         }
