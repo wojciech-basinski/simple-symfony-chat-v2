@@ -5,7 +5,7 @@ namespace AppBundle\Utils\Cache;
 use AppBundle\Entity\User;
 use AppBundle\Utils\ChatConfig;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Exception\RuntimeException;
+use \RuntimeException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Simple\FilesystemCache;
 
