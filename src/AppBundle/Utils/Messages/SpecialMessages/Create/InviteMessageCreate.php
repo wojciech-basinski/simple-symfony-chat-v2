@@ -64,6 +64,7 @@ class InviteMessageCreate implements SpecialMessageAdd
         if (\in_array($this->session->get('channel'), $defaultChannelsIds, true)) {
             return $this->wrongChannelError();
         }
+        /** @var User|null $userToInvite */
         $userToInvite = $this->em->getRepository('AppBundle:User')->findOneBy(['username' => $textSplitted[1]]);
         return $this->invite($userToInvite, $user, $textSplitted);
     }

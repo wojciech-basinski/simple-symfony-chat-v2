@@ -3,6 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\User;
+use AppBundle\Repository\UserOnlineRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\UserOnline as UserOnlineEntity;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -27,12 +28,17 @@ class UserOnline
      * @var SessionInterface
      */
     private $session;
+    /**
+     * @var UserOnlineRepository
+    */
+    private $userOnlineRepository;
 
     public function __construct(EntityManagerInterface $em, ChatConfig $config, SessionInterface $session)
     {
         $this->em = $em;
         $this->config = $config;
         $this->session = $session;
+        $this->initializeRepository();
     }
 
     /**
@@ -40,15 +46,16 @@ class UserOnline
      *
      * @param User $user User instance
      * @param int $channel Channel's id
+     *
      * @return int
+     * @throws \Exception
      */
     public function addUserOnline(User $user, int $channel): int
     {
         if ($user->getBanned()) {
             return 1;
         }
-        if ($this->em->getRepository(UserOnlineEntity::class)
-            ->findOneBy([
+        if ($this->userOnlineRepository->findOneBy([
                 'userId' => $user->getId()
             ])
         ) {
@@ -77,14 +84,15 @@ class UserOnline
      * @param bool $typing
      *
      * @return int
+     * @throws \Exception
      */
     public function updateUserOnline(User $user, int $channel, bool $typing): int
     {
-        $online = $this->em->getRepository(UserOnlineEntity::class)
-                    ->findOneBy([
+        /** @var UserOnlineEntity|null $online */
+        $online = $this->userOnlineRepository->findOneBy([
                         'userId' => $user->getId()
                     ]);
-        if (!$online) {
+        if ($online === null) {
             if ($this->addUserOnline($user, $channel)) {
                 return 1;
             }
@@ -106,12 +114,12 @@ class UserOnline
      * @param int $channel Channel's id
      *
      * @return array Array of online Users
+     * @throws \Exception
      */
     public function getOnlineUsers(int $id, int $channel): array
     {
         $this->deleteInactiveUsers($id, $channel);
-        $usersOnline = $this->em->getRepository(UserOnlineEntity::class)
-            ->findAllOnlineUserExceptUser($id, $channel);
+        $usersOnline = $this->userOnlineRepository->findAllOnlineUserExceptUser($id, $channel);
 
         foreach ($usersOnline as &$user) {
             $user = $user->createArrayToJson();
@@ -127,10 +135,12 @@ class UserOnline
      */
     public function deleteUserWhenLogout(int $id): void
     {
-        $online = $this->em->getRepository(UserOnlineEntity::class)
-            ->findOneBy([
+        $online = $this->userOnlineRepository->findOneBy([
                 'userId' => $id,
             ]);
+        if ($online === null) {
+            return;
+        }
         $this->em->remove($online);
         $this->em->flush();
     }
@@ -141,13 +151,23 @@ class UserOnline
      *
      * @param int $id User's id
      * @param int $channel Channel's id
+     *
+     * @throws \Exception
      */
     private function deleteInactiveUsers(int $id, int $channel): void
     {
         $time = new \DateTime('now');
         $time->modify('-'.$this->config->getInactiveTime().'sec');
 
-        $this->em->getRepository(UserOnlineEntity::class)
-                ->deleteInactiveUsers($time, $id, $channel);
+        $this->userOnlineRepository->deleteInactiveUsers($time, $id, $channel);
+    }
+
+    private function initializeRepository(): void
+    {
+        $repository = $this->em->getRepository(UserOnlineEntity::class);
+        if (!$repository instanceof UserOnlineRepository) {
+            throw new \RuntimeException('Could not find repository');
+        }
+        $this->userOnlineRepository = $repository;
     }
 }

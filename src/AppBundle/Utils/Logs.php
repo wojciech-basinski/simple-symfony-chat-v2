@@ -3,6 +3,7 @@
 namespace AppBundle\Utils;
 
 use AppBundle\Entity\User;
+use AppBundle\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\Message;
 
@@ -25,6 +26,8 @@ class Logs
 
     public function getLogs(string $start, string $end, string $userName): array
     {
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $this->em->getRepository(Message::class);
         [$dateStart, $dateEnd] = $this->createDates($start, $end);
 
         if ($dateEnd < $dateStart) {
@@ -33,7 +36,7 @@ class Logs
 
         $user = $this->getUser($userName);
 
-        $messages = $this->em->getRepository(Message::class)->findBetweenTwoDates(
+        $messages = $messageRepository->findBetweenTwoDates(
             $dateStart,
             $dateEnd,
             $this->config->getPrivateMessageAdd(),
@@ -47,7 +50,9 @@ class Logs
         if ($userName === '') {
             return null;
         }
-        return $this->em->getRepository(User::class)->findOneByUsername($userName);
+        /** @var User|null $user */
+        $user = $this->em->getRepository(User::class)->findOneBy(['username' => $userName]);
+        return $user;
     }
 
     private function createDates(string $start, string $end): array

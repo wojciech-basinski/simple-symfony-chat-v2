@@ -182,6 +182,7 @@ class ChatConfig
         if ($this->invitations !== null) {
             return $this->invitations;
         }
+        /** @var Invite[] $invitations */
         $invitations = $this->em->getRepository(Invite::class)->findBy([
             'userId' => $user->getId()
         ]);
@@ -218,6 +219,11 @@ class ChatConfig
     private function getUserPrivateChannelName(int $id): string
     {
         $id -= self::PRIVATE_CHANNEL_ADD;
-        return $this->em->find('AppBundle:User', $id)->getUsername();
+        /** @var User|null $user */
+        $user = $this->em->find('AppBundle:User', $id);
+        if ($user === null) {
+            return '';
+        }
+        return $user->getUsername();
     }
 }

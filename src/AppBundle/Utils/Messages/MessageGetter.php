@@ -2,7 +2,9 @@
 
 namespace AppBundle\Utils\Messages;
 
+use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
+use AppBundle\Repository\MessageRepository;
 use AppBundle\Utils\Channel;
 use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\Messages\Transformers\MessageToArrayTransformer;
@@ -39,6 +41,10 @@ class MessageGetter
      * @var MessageDisplayValidator
      */
     private $messageDisplayValidator;
+    /**
+     * @var MessageRepository
+     */
+    private $messageRepository;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -54,6 +60,7 @@ class MessageGetter
         $this->logger = $logger;
         $this->messageTransformer = $messageTransformer;
         $this->messageDisplayValidator = $messageDisplayValidator;
+        $this->initializeRepository();
     }
 
     /**
@@ -63,19 +70,18 @@ class MessageGetter
      * @param User $user
      *
      * @return array Array of messages changed to array
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function getMessagesInIndex(User $user): array
     {
         $channel = $this->session->get('channel');
         $channelPrivateMessage = $this->config->getUserPrivateMessageChannelId($user);
 
-        $messages = $this->em->getRepository('AppBundle:Message')
-            ->getMessagesFromLastDay($channel, $channelPrivateMessage);
+        $messages = $this->messageRepository->getMessagesFromLastDay($channel, $channelPrivateMessage);
 
         $this->session->set(
             'lastId',
-            $this->em->getRepository('AppBundle:Message')
-                ->getIdFromLastMessage()
+            $this->messageRepository->getIdFromLastMessage()
         );
 
         $messages = $this->messageTransformer->transformMessagesToArray($messages);
@@ -96,17 +102,16 @@ class MessageGetter
     {
         $lastId = $this->session->get('lastId');
         //only when channel was changed
-        if ($this->session->get('changedChannel', null)) {
+        if ($this->session->get('changedChannel')) {
             $this->session->remove('changedChannel');
             return $this->getMessagesAfterChangingChannel($user);
         }
 
-        $messages = $this->em->getRepository('AppBundle:Message')
-            ->getMessagesFromLastId(
-                $lastId,
-                $this->config->getPrivateMessageAdd(),
-                $this->config->getUserPrivateMessageChannelId($user)
-            );
+        $messages = $this->messageRepository->getMessagesFromLastId(
+            $lastId,
+            $this->config->getPrivateMessageAdd(),
+            $this->config->getUserPrivateMessageChannelId($user)
+        );
 
         //if get new messages, update var lastId in session
         if (\end($messages)) {
@@ -129,6 +134,7 @@ class MessageGetter
      * @param User $user Current user
      *
      * @return array Array of messages changed to array
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     private function getMessagesAfterChangingChannel(User $user): array
     {
@@ -138,5 +144,14 @@ class MessageGetter
         });
 
         return $messages;
+    }
+
+    private function initializeRepository(): void
+    {
+        $repository = $this->em->getRepository(Message::class);
+        if (!$repository instanceof MessageRepository) {
+            throw new \RuntimeException('Could not find repository');
+        }
+        $this->messageRepository = $repository;
     }
 }

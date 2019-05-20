@@ -63,6 +63,7 @@ class UnInviteMessageCreate implements SpecialMessageAdd
         if ($this->session->get('channel') === 1) {
             return $this->wrongChannelError();
         }
+        /** @var User|null $userToInvite */
         $userToInvite = $this->em->getRepository('AppBundle:User')->findOneBy(['username' => $textSplitted[1]]);
         return $this->unInvite($userToInvite, $user, $textSplitted);
     }
@@ -75,11 +76,12 @@ class UnInviteMessageCreate implements SpecialMessageAdd
         if ($user->getId() === $userToInvite->getId()) {
             return $this->sentYourselfUnInvitationError();
         }
+        /** @var Invite|null $invite */
         $invite = $this->em->getRepository('AppBundle:Invite')->findOneBy([
             'channelId' => $this->session->get('channel'),
             'userId' => $userToInvite->getId()
         ]);
-        if (!$invite) {
+        if ($invite === null) {
             return $this->unInvitationSentError($userToInvite->getUsername());
         }
         $this->addUnInvitation($userToInvite, $user, $invite);

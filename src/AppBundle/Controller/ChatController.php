@@ -11,6 +11,7 @@ use AppBundle\Utils\UserOnline;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,16 +38,15 @@ class ChatController extends Controller
      *
      * @return Response Return main page with all start information
      *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
+     * @throws \Exception
      */
     public function showAction(
         Request $request,
         UserOnline $userOnline,
         Channel $channelService,
         ChatConfig $config,
-        SessionInterface $session
+        SessionInterface $session,
+        EngineInterface $twig
     ): Response {
         $user = $this->getUser();
         $channel = $session->get('channel');
@@ -59,7 +59,9 @@ class ChatController extends Controller
             return $this->redirectToRoute('banned');
         }
         $response = new Response();
-        $body = $this->container->get('twig')->render('chat/index.html.twig', [
+//        /** @var EngineInterface $twig */
+//        $twig = $this->container->get('twig');
+        $body = $twig->render('chat/index.html.twig', [
             'user' => $user,
             'user_channel' => $channel,
             'channels' => $config->getChannels($user),

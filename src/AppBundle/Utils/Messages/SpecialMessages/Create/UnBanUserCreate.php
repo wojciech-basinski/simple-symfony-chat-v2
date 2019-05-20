@@ -72,8 +72,9 @@ class UnBanUserCreate implements SpecialMessageAdd
         if (!count($textParts)) {
             return $this->wrongUsernameError();
         }
+        /** @var User|null $userToUnban */
         $userToUnban = $this->em->getRepository(User::class)
-            ->findOneByUsername($textParts[0]);
+            ->findOneBy(['username' => $textParts[0]]);
 
         return $this->unbanUser($userToUnban, $user, $textParts);
     }

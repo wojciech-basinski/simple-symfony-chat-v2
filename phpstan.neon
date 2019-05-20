@@ -1,0 +1,6 @@
+parameters:
+	featureToggles:
+		missingClosureNativeReturnTypehintRule: true
+	reportStaticMethodSignatures: true
+	tmpDir: %rootDir%/tmp
+	autoload_files: vendor/autoload.php

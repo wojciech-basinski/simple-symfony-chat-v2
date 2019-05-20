@@ -20,9 +20,9 @@ class DeleteMessage
      */
     private $session;
     /**
-     * @var Request
+     * @var RequestStack
      */
-    private $request;
+    private $requestStack;
 
     public function __construct(
         EntityManagerInterface $em,
@@ -31,7 +31,7 @@ class DeleteMessage
     ) {
         $this->em = $em;
         $this->session = $session;
-        $this->request = $requestStack->getCurrentRequest();
+        $this->requestStack = $requestStack;
     }
     /**
      * Deleting message from database
@@ -47,16 +47,21 @@ class DeleteMessage
     {
         $channel = $this->session->get('channel');
         $message = $this->em->getRepository(Message::class)->find($id);
-
+        if ($message === null) {
+            return 0;
+        }
         $this->em->remove($message);
         $this->em->flush();
 
+        if ($this->requestStack->getCurrentRequest() === null) {
+            throw new \RuntimeException('Could not find request');
+        }
         $message = new Message();
         $message->setUserInfo($user)
             ->setChannel($channel)
             ->setText('/delete ' . $id)
             ->setDate(new \DateTime())
-            ->setIp($this->request->server->get('REMOTE_ADDR'));
+            ->setIp($this->requestStack->getCurrentRequest()->server->get('REMOTE_ADDR'));
 
         $this->em->persist($message);
         $this->em->flush();

@@ -49,6 +49,7 @@ class AfkMessageCreate implements SpecialMessageAdd
 
     private function afk(array $text, User $user, int $channel): bool
     {
+        /** @var UserOnline|null $userOnline */
         $userOnline = $this->em->getRepository(UserOnline::class)->findOneBy(['userId' => $user->getId()]);
         if ($userOnline === null) {
             $this->session->set(

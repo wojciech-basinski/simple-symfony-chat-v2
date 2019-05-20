@@ -15,7 +15,8 @@ class MessageRepository extends EntityRepository
      * @param int $channel Channel's id
      * @param int $channelPrivateMessage private channel's id
      *
-     * @return array|null Array of Messages Entity of null if no messages
+     * @return array Array of Messages Entity of null if no messages
+     * @throws \Exception
      */
     public function getMessagesFromLastDay(int $channel, int $channelPrivateMessage): array
     {
@@ -45,7 +46,7 @@ class MessageRepository extends EntityRepository
      * @param int $channelMessagePrefix Private message prefix
      * @param int $channelPrivateMessage
      *
-     * @return array|null Array of Messages or null if no messages
+     * @return array Array of Messages or null if no messages
      */
     public function getMessagesFromLastId(int $lastId, int $channelMessagePrefix, int $channelPrivateMessage): array
     {
@@ -69,7 +70,7 @@ class MessageRepository extends EntityRepository
      * @param int $channel Channel's id
      * @param int $channelPrivateMessage
      *
-     * @return array|null Array of messages or null if no messages
+     * @return array Array of messages or null if no messages
      */
     public function getMessagesBetweenIds(int $idFirst, int $idSecond, int $channel, int $channelPrivateMessage): array
     {
@@ -108,7 +109,7 @@ class MessageRepository extends EntityRepository
     /**
      * Deletes message from chat
      *
-     * @param $id message's id
+     * @param int $id message's id
      *
      * @return int status of deleting
      */

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 class AdminPanel
@@ -40,6 +41,7 @@ class AdminPanel
      */
     public function changeUsersRole(int $id, string $role): void
     {
+        /** @var User|null $user */
         $user = $this->em->getRepository('AppBundle:User')->find($id);
         if ($user === null) {
             return;

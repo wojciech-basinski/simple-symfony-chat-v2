@@ -11,6 +11,7 @@ use FOS\UserBundle\Model\UserInterface;
 use FOS\UserBundle\Model\UserManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -38,7 +39,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
      */
     private $session;
     /**
-     * @var RequestStack
+     * @var Request
      */
     private $request;
     /**
@@ -59,7 +60,11 @@ class LoginByPhpBBListener implements EventSubscriberInterface
         $this->router = $router;
         $this->session = $session;
         $this->userManager = $userManager;
-        $this->request = $request->getCurrentRequest();
+        $currentRequest = $request->getCurrentRequest();
+        if ($currentRequest === null) {
+            throw new \RuntimeException('could not find request');
+        }
+        $this->request = $currentRequest;
     }
 
     public function onKernelController(FilterControllerEvent $event): void
@@ -84,7 +89,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
                 return new RedirectResponse($path);
             });
         }
-        if (!$this->tokenStorage->getToken() || !($this->tokenStorage->getToken()->getUser() instanceof User)) {
+        if ($this->tokenStorage->getToken() === null || !($this->tokenStorage->getToken()->getUser() instanceof User)) {
             $connection = $this->em->getConnection()->getWrappedConnection();
 
             $value = $connection->prepare('SELECT * FROM phpbb_sessions WHERE session_user_id = :id and session_id = :sessionId');
@@ -105,7 +110,7 @@ class LoginByPhpBBListener implements EventSubscriberInterface
                         $user->setId($cookie);
                         $user->setEmail($value2[0]['user_email']);
                         $user->setPassword('');
-                        $user->setEnabled(1);
+                        $user->setEnabled(true);
                         $user->setAvatar($value2[0]['user_avatar']);
 
                         $this->setUsersRoles($user, $value2);
@@ -167,7 +172,9 @@ class LoginByPhpBBListener implements EventSubscriberInterface
     private function logUser(array $value): ?UserInterface
     {
         $user = $this->userManager->findUserByUsername($value[0]['username']);
-
+        if ($user === null) {
+            throw new \RuntimeException('could not find user');
+        }
         $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
         $this->tokenStorage->setToken($token);
 
@@ -177,9 +184,11 @@ class LoginByPhpBBListener implements EventSubscriberInterface
         return $user;
     }
 
-    private function addToList(User $user)
+    private function addToList(UserInterface $user)
     {
-        $isOnList = $this->em->getRepository('AppBundle:ListPhs')->findBy(['username' => $user->getUsername(), 'date' => new \DateTime()]);
+        $isOnList = $this->em->getRepository('AppBundle:ListPhs')->findBy(
+            ['username' => $user->getUsername(), 'date' => new \DateTime()]
+        );
 
         if ($isOnList) {
             return;
