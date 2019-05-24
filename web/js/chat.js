@@ -45,7 +45,6 @@ $(document).ready(function () {
         removeLine = setTimeout(removeLineNewMessages, 8000);
         clearTimeout(afkTimeout);
         setReturnFromAfk();
-        $('#message-text').focus();
     };
 
     function setAfk() {
