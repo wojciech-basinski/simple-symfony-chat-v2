@@ -153,7 +153,7 @@ class MessageRepository extends EntityRepository
 
     private function sortByDateAsc(array $messages): array
     {
-        uasort($messages, static function ($a, $b) {
+        uasort($messages, static function ($a, $b): int {
             return $a->getDate() <=> $b->getDate();
         });
 

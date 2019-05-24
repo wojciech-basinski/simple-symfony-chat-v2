@@ -10,10 +10,14 @@ use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\Messages\Transformers\MessageToArrayTransformer;
 use AppBundle\Utils\Messages\Validator\MessageDisplayValidator;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
+use function end;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use function usort;
 
 class MessageGetter
 {
@@ -70,7 +74,7 @@ class MessageGetter
      * @param User $user
      *
      * @return array Array of messages changed to array
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     public function getMessagesInIndex(User $user): array
     {
@@ -97,6 +101,7 @@ class MessageGetter
      * @param User $user
      *
      * @return array Array of messages changed to array
+     * @throws NonUniqueResultException
      */
     public function getMessagesFromLastId(User $user): array
     {
@@ -114,13 +119,13 @@ class MessageGetter
         );
 
         //if get new messages, update var lastId in session
-        if (\end($messages)) {
-            $this->session->set('lastId', \end($messages)->getId());
+        if (end($messages)) {
+            $this->session->set('lastId', end($messages)->getId());
         }
         $messages = $this->messageTransformer->transformMessagesToArray($messages);
 
         $messagesToDisplay = $this->messageDisplayValidator->checkIfMessagesCanBeDisplayed($messages, $user);
-        \usort($messagesToDisplay, static function ($a, $b) {
+        usort($messagesToDisplay, static function ($a, $b): int {
             return $a <=> $b;
         });
 
@@ -134,12 +139,12 @@ class MessageGetter
      * @param User $user Current user
      *
      * @return array Array of messages changed to array
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
     private function getMessagesAfterChangingChannel(User $user): array
     {
         $messages = $this->getMessagesInIndex($user);
-        \usort($messages, static function ($a, $b) {
+        usort($messages, static function ($a, $b): int {
             return $a <=> $b;
         });
 
@@ -150,7 +155,7 @@ class MessageGetter
     {
         $repository = $this->em->getRepository(Message::class);
         if (!$repository instanceof MessageRepository) {
-            throw new \RuntimeException('Could not find repository');
+            throw new RuntimeException('Could not find repository');
         }
         $this->messageRepository = $repository;
     }
