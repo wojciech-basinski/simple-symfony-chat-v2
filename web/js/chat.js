@@ -240,7 +240,7 @@ $(document).ready(function () {
             if (json.status === "false") {
                 $('#modal-text').text(json.errorMessage);
                 $('#modal-error').modal();
-            } else {
+            } else if(text === undefined) {
                 playSound(sendMessageSound);
             }
             clearTimeout(refresh);
