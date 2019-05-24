@@ -3,6 +3,7 @@
 namespace Tests\Utils;
 
 use AppBundle\Entity\User;
+use AppBundle\Entity\UserOnline as UserOnlineEntity;
 use AppBundle\Repository\UserOnlineRepository;
 use AppBundle\Utils\ChatConfig;
 use AppBundle\Utils\UserOnline;
@@ -46,6 +47,9 @@ class UserOnlineTest extends TestCase
         $this->config = $this->createMock(ChatConfig::class);
         $this->session = $this->createMock(SessionInterface::class);
         $this->userOnlineRepository = $this->createMock(UserOnlineRepository::class);
+        $this->em->method('getRepository')
+            ->with(UserOnlineEntity::class)
+            ->willReturn($this->userOnlineRepository);
         $this->userOnlineService = new UserOnline($this->em, $this->config, $this->session);
         $this->channel = random_int(1, 999);
     }
@@ -132,7 +136,7 @@ class UserOnlineTest extends TestCase
     public function testUpdateUserOnlineWithUserOnline(): void
     {
         $user = new User();
-        $userOnline = (new \AppBundle\Entity\UserOnline())
+        $userOnline = (new UserOnlineEntity())
             ->setChannel(-1)
             ->setTyping(false);
         $this->em->method('getRepository')
@@ -156,7 +160,7 @@ class UserOnlineTest extends TestCase
 
     public function testDeleteUserWhenLogout(): void
     {
-        $userOnline = new \AppBundle\Entity\UserOnline();
+        $userOnline = new UserOnlineEntity();
         $this->em->method('getRepository')
             ->willReturn($this->userOnlineRepository);
         $this->userOnlineRepository->method('findOneBy')
@@ -176,7 +180,7 @@ class UserOnlineTest extends TestCase
         $user = (new User())
             ->setUsername('username')
             ->setRoles(['ROLE_MODERATOR']);
-        $userOnline = (new \AppBundle\Entity\UserOnline())->setUserInfo($user)
+        $userOnline = (new UserOnlineEntity())->setUserInfo($user)
             ->setTyping(true)
             ->setAfk(true)
             ->setUserId(15);

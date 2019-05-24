@@ -38,11 +38,8 @@ class BannedTest extends TestCase
         $user = (new User())->setBanReason('reason');
         $this->em->method('getRepository')
             ->willReturn($this->userRepository);
-        $this->userRepository->method('__call')
-            ->with(
-                $this->equalTo('findOneByUsername'),
-                $this->equalTo(['username'])
-            )
+        $this->userRepository->method('findOneBy')
+            ->with(['username' => 'username'])
             ->willReturn($user);
 
         $this->assertEquals(
@@ -58,11 +55,8 @@ class BannedTest extends TestCase
 
         $this->em->method('getRepository')
             ->willReturn($this->userRepository);
-        $this->userRepository->method('__call')
-            ->with(
-                $this->equalTo('findOneByUsername'),
-                $this->equalTo(['username'])
-            )
+        $this->userRepository->method('findOneBy')
+            ->with(['username' => 'username'])
             ->willReturn($user);
 
         $this->assertEquals(
@@ -79,11 +73,8 @@ class BannedTest extends TestCase
 
         $this->em->method('getRepository')
             ->willReturn($this->userRepository);
-        $this->userRepository->method('__call')
-            ->with(
-                $this->equalTo('findOneByUsername'),
-                $this->equalTo(['username'])
-            )
+        $this->userRepository->method('findOneBy')
+            ->with(['username' => 'username'])
             ->willReturn($user);
         $this->em->expects($this->once())
             ->method('persist');
@@ -107,11 +98,8 @@ class BannedTest extends TestCase
 
         $this->em->method('getRepository')
             ->willReturn($this->userRepository);
-        $this->userRepository->method('__call')
-            ->with(
-                $this->equalTo('findOneByUsername'),
-                $this->equalTo(['username'])
-            )
+        $this->userRepository->method('findOneBy')
+            ->with(['username' => 'username'])
             ->willReturn($user);
 
         $this->assertEquals(
