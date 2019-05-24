@@ -64,8 +64,9 @@ class AfkMessageCreate implements SpecialMessageAdd
         }
 
         $userOnline->setAfk(true);
-        $this->session->set('afk', true);
+
         if (!isset($text[1])) {
+            $this->session->set('afk', true);
             $this->addMessageToDatabase->addBotMessage(
                 $this->createAfkText($user),
                 $channel
@@ -79,9 +80,9 @@ class AfkMessageCreate implements SpecialMessageAdd
     private function removeAfk(array $text, User $user, UserOnline $userOnline, int $channel): bool
     {
         $userOnline->setAfk(false);
-        $this->session->set('afk', false);
 
         if (!isset($text[1])) {
+            $this->session->set('afk', false);
             $this->addMessageToDatabase->addBotMessage(
                 $this->createReturnFromAfkText($user),
                 $channel
