@@ -85,17 +85,14 @@ class LogsTest extends TestCase
         $user = new User();
         $this->em->expects($this->at(0))
             ->method('getRepository')
-            ->with(User::class)
-            ->willReturn($this->userRepository);
-        $this->em->expects($this->at(1))
-            ->method('getRepository')
             ->with(Message::class)
             ->willReturn($this->messageRepository);
-        $this->userRepository->method('__call')
-            ->with(
-                $this->equalTo('findOneByUsername'),
-                $this->equalTo(['username'])
-            )
+        $this->em->expects($this->at(1))
+            ->method('getRepository')
+            ->with(User::class)
+            ->willReturn($this->userRepository);
+        $this->userRepository->method('findOneBy')
+            ->with(['username' => 'username'])
             ->willReturn($user);
         $this->messageRepository->method('findBetweenTwoDates')
             ->willReturn([$message1, $message2]);
