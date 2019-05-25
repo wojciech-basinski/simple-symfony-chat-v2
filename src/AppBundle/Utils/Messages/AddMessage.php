@@ -8,6 +8,7 @@ use AppBundle\Utils\Messages\Transformers\NewLineTransformer;
 use AppBundle\Utils\Messages\Transformers\SpecialMessageAddTransformer;
 use AppBundle\Utils\Messages\Validator\AddMessageValidator;
 use AppBundle\Utils\Messages\Validator\UserAfkValidator;
+use function htmlentities;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class AddMessage
@@ -81,7 +82,7 @@ class AddMessage
         }
 
         $this->addMessageToDatabase->addMessage(
-            $this->newLineTransformer->transformLine(\htmlentities($text)),
+            $this->newLineTransformer->transformLine(htmlentities($text)),
             $channel,
             $user
         );

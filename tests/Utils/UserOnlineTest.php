@@ -208,4 +208,17 @@ class UserOnlineTest extends TestCase
             $this->userOnlineService->getOnlineUsers(1, $this->channel)
         );
     }
+
+    public function testDeleteUserWhenLogoutWithoutUser(): void
+    {
+        $this->userOnlineRepository->method('findOneBy')
+            ->with(['userId' => 666])
+            ->willReturn(null);
+        $this->em->expects($this->never())
+            ->method('remove');
+        $this->em->expects($this->never())
+            ->method('flush');
+
+        $this->userOnlineService->deleteUserWhenLogout(666);
+    }
 }

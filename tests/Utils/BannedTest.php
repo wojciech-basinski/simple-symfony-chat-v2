@@ -7,6 +7,7 @@ use AppBundle\Repository\UserRepository;
 use AppBundle\Utils\Banned;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
@@ -116,5 +117,18 @@ class BannedTest extends TestCase
 
         $this->assertNull($user->getBanReason());
         $this->assertNull($user->getBanned());
+    }
+
+    public function testGetUserWithNoUser(): void
+    {
+        $this->em->method('getRepository')
+            ->willReturn($this->userRepository);
+        $this->userRepository->method('findOneBy')
+            ->with(['username' => 'xxxx'])
+            ->willReturn(null);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->bannedService->getReason('xxxx');
     }
 }
