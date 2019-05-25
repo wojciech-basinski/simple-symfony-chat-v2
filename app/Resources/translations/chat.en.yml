@@ -62,3 +62,4 @@ error:
     notPermittedToListBan: You do not have permission to see bans' list
     cantBanAdmin: You cannot ban administator
     errorOccured: An error occured
+    emptyPm: Private message text cannot be empty

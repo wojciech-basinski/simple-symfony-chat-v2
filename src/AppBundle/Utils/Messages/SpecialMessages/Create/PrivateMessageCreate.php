@@ -61,7 +61,7 @@ class PrivateMessageCreate implements SpecialMessageAdd
         }
         $textSplitted = explode(' ', $text[1], 2);
         /** @var User|null $secondUser */
-        $secondUser = $this->em->getRepository('AppBundle:User')->findOneBy(['username' => $textSplitted[0]]);
+        $secondUser = $this->em->getRepository(User::class)->findOneBy(['username' => $textSplitted[0]]);
         return $this->insertPrivMessage($user, $secondUser, $textSplitted);
     }
 
@@ -69,6 +69,10 @@ class PrivateMessageCreate implements SpecialMessageAdd
     {
         if ($secondUser === null) {
             return $this->wrongUsernameError();
+        }
+
+        if (!isset($textSplitted[1])) {
+            return $this->wrongMessageText();
         }
 
         $this->addMessageToDatabase->addMessage(
@@ -83,6 +87,11 @@ class PrivateMessageCreate implements SpecialMessageAdd
         );
 
         return true;
+    }
+
+    private function wrongMessageText(): bool
+    {
+        return $this->returnError('error.emptyPm');
     }
 
     private function wrongUsernameError(): bool
