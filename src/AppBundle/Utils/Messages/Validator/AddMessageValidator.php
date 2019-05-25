@@ -4,7 +4,12 @@ namespace AppBundle\Utils\Messages\Validator;
 
 use AppBundle\Entity\User;
 use AppBundle\Utils\ChatConfig;
+use function array_key_exists;
+use function strlen;
+use function strpos;
+use function strtolower;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use function trim;
 
 class AddMessageValidator
 {
@@ -40,8 +45,8 @@ class AddMessageValidator
             $this->session->set('errorMessage', 'Wiadomośc nie może być pusta');
             return false;
         }
-        $text = \strtolower(\trim($text));
-        if (\strlen($text) <= 0) {
+        $text = strtolower(trim($text));
+        if (strlen($text) <= 0) {
             $this->session->set('errorMessage', 'Wiadomośc nie może być pusta');
             return false;
         }
@@ -49,15 +54,15 @@ class AddMessageValidator
             $this->session->set('errorMessage', 'Nie możesz wysyłać wiadomości będąc nie zalogowanym');
             return false;
         }
-        if (!\array_key_exists($channel, $this->config->getChannels($user))) {
+        if (!array_key_exists($channel, $this->config->getChannels($user))) {
             $this->session->set('errorMessage', 'Nie możesz pisać na tym kanale');
             return false;
         }
-        if (\strpos($text, '(pm)') === 0) {
+        if (strpos($text, '(pm)') === 0) {
             $this->session->set('errorMessage', 'Wiadomośc nie może zaczynać się od (pm)');
             return false;
         }
-        if (\strpos($text, '(pw)') === 0) {
+        if (strpos($text, '(pw)') === 0) {
             $this->session->set('errorMessage', 'Wiadomośc nie może zaczynać się od (pw)');
             return false;
         }

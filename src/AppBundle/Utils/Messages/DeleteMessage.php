@@ -5,7 +5,7 @@ namespace AppBundle\Utils\Messages;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -54,7 +54,7 @@ class DeleteMessage
         $this->em->flush();
 
         if ($this->requestStack->getCurrentRequest() === null) {
-            throw new \RuntimeException('Could not find request');
+            throw new RuntimeException('Could not find request');
         }
         $message = new Message();
         $message->setUserInfo($user)

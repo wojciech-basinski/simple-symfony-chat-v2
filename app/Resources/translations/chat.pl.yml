@@ -62,3 +62,4 @@ error:
     notPermittedToListBan: Nie masz upranień do zobaczenia listy banów
     cantBanAdmin: Nie możesz zbanować innego administratora
     errorOccured: Pojawił się błąd
+    emptyPm: Tekst prywatnej wiadomości nie może być pusty

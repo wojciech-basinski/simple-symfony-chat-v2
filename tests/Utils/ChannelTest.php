@@ -80,4 +80,14 @@ class ChannelTest extends TestCase
 
         $this->assertTrue($this->channelService->changeChannelOnChat($user, 55));
     }
+
+    public function testWithNullChannel(): void
+    {
+        $user = new User();
+        $this->config->expects($this->never())
+            ->method('getUserPrivateMessageChannelId');
+        $this->config->expects($this->never())
+            ->method('getChannels');
+        $this->assertFalse($this->channelService->checkIfUserCanBeOnThatChannel($user, null));
+    }
 }

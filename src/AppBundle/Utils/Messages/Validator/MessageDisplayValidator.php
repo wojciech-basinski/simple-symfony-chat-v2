@@ -4,6 +4,8 @@ namespace AppBundle\Utils\Messages\Validator;
 
 use AppBundle\Entity\User;
 use AppBundle\Utils\Channel;
+use function count;
+use function explode;
 
 class MessageDisplayValidator
 {
@@ -28,14 +30,16 @@ class MessageDisplayValidator
      */
     public function checkIfMessagesCanBeDisplayed(array $messages, User $user): array
     {
-        $count = \count($messages);
+        $count = count($messages);
         for ($i = 0; $i < $count; $i++) {
-            $textSplitted = \explode(' ', $messages[$i]['text']);
+            $textSplitted = explode(' ', $messages[$i]['text']);
             if ($textSplitted[0] === '/delete') {
                 unset($messages[$i]);
+                continue;
             }
-            if (!$this->channel->checkIfUserCanBeOnThatChannel($user, $messages[$i]['channel'])) {
+            if (!$this->channel->checkIfUserCanBeOnThatChannel($user, (int)$messages[$i]['channel'])) {
                 unset($messages[$i]);
+                continue;
             }
         }
 

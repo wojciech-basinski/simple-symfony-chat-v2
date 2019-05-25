@@ -24,11 +24,13 @@
 
     <filter>
         <whitelist>
-            <directory>src</directory>
+            <directory>src/AppBundle/Utils</directory>
             <exclude>
                 <directory>src/*Bundle/Resources</directory>
                 <directory>src/*/*Bundle/Resources</directory>
                 <directory>src/*/Bundle/*Bundle/Resources</directory>
+                <file>src/AppBundle/Utils/ChatConfig.php</file>
+                <!-- This file depends on settings and it can be tested only on default values, it does not make sense I think -->
             </exclude>
         </whitelist>
     </filter>
