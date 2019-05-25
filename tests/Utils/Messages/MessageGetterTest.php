@@ -100,7 +100,7 @@ class MessageGetterTest extends TestCase
         );
     }
 
-    public function testgetMessagesFromLastIdAfterChangeChannel(): void
+    public function testGetMessagesFromLastIdAfterChangeChannel(): void
     {
         $message1 = new Message();
         $message2 = new Message();
@@ -137,7 +137,7 @@ class MessageGetterTest extends TestCase
         );
     }
 
-    public function testgetMessagesFromLastIdWithNotChangedChannel(): void
+    public function testGetMessagesFromLastIdWithNotChangedChannel(): void
     {
         $message1 = new Message();
         $message2 = new Message();

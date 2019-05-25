@@ -68,7 +68,7 @@ class MessageToArrayTransformerTest extends TestCase
                     'user_avatar' => 'some avatar'
                 ]
             ],
-        $this->messageToArrayTransformer->transformMessagesToArray($messages)
+            $this->messageToArrayTransformer->transformMessagesToArray($messages)
         );
     }
 

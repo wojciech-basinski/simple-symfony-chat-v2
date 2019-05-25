@@ -1,6 +1,5 @@
 <?php declare(strict_types = 1);
 
-
 namespace Tests\Utils\Messages\Validator;
 
 use AppBundle\Entity\Message;

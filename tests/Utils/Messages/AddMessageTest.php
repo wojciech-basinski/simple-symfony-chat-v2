@@ -2,7 +2,6 @@
 
 namespace Tests\Utils\Messages;
 
-
 use AppBundle\Entity\User;
 use AppBundle\Utils\Messages\AddMessage;
 use AppBundle\Utils\Messages\Database\AddMessageToDatabase;

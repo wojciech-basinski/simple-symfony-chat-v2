@@ -22,7 +22,9 @@ class SpecialMessageDisplayTransformerTest extends TestCase
     protected function setUp()
     {
         $this->displayMessageServiceFactory = $this->createMock(DisplayMessageServiceFactory::class);
-        $this->specialMessageDisplayTransformer = new SpecialMessageDisplayTransformer($this->displayMessageServiceFactory);
+        $this->specialMessageDisplayTransformer = new SpecialMessageDisplayTransformer(
+            $this->displayMessageServiceFactory
+        );
     }
 
     public function testSpecialMessagesAddReturnsFail(): void
