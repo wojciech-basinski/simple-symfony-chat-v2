@@ -28,9 +28,13 @@ php bin/console doctrine:schema:update --force
 
 **Live Demo:**
 - https://chatdemo.tk/
+
 username: demo
+
 password: demo
 
 **Bitbucket:**
+
 If you want to see more development details like branches, pull requests:
+
 https://bitbucket.org/basinskiwojciech/chat/src/master/
